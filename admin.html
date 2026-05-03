@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin · Hashinika Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        :root {
+            --rose:     #f43f5e;
+            --rose-dim: #be123c;
+            --amber:    #f59e0b;
+            --bg:       #060209;
+            --surface:  rgba(18, 6, 26, 0.75);
+            --border:   rgba(244, 63, 94, 0.10);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: #e2d8f0;
+            font-family: 'Syne', sans-serif;
+            overflow-x: hidden; min-height: 100vh;
+        }
+
+        /* Dot grid */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: -1;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        /* Orbs */
+        body::after {
+            content: '';
+            position: fixed; width: 60vw; height: 60vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(244,63,94,0.08), transparent 70%);
+            top: -20%; left: -20%; filter: blur(100px); z-index: -1;
+            animation: orbDrift 20s ease-in-out infinite alternate;
+        }
+        @keyframes orbDrift { 0%{transform:translate(0,0)} 100%{transform:translate(30vw,40vh)} }
+
+        /* Surface panels */
+        .panel {
+            background: rgba(15, 4, 22, 0.65);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(244, 63, 94, 0.10);
+            border-radius: 16px;
+        }
+
+        /* Input */
+        .field {
+            width: 100%;
+            background: rgba(6, 2, 9, 0.8);
+            border: 1px solid rgba(244, 63, 94, 0.12);
+            color: #e2d8f0;
+            padding: 13px 16px;
+            border-radius: 10px;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.9rem;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            outline: none;
+        }
+        .field:focus {
+            border-color: var(--rose);
+            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.1);
+        }
+        .field::placeholder { color: #4a3550; }
+
+        .label {
+            display: block; font-size: 0.65rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: #7c6a8a; margin-bottom: 7px;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        /* Tabs */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .tab-btn {
+            padding: 9px 20px; border-radius: 999px;
+            font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            color: #4a3550;
+            transition: color 0.2s, background 0.2s;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        .tab-btn.active { background: rgba(244, 63, 94, 0.1); color: var(--rose); }
+        .tab-btn:hover:not(.active) { color: #e2d8f0; }
+
+        /* Buttons */
+        .btn-rose {
+            background: var(--rose); color: white;
+            border: none; border-radius: 10px; cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 13px 28px;
+            transition: background 0.2s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-rose:hover { background: var(--rose-dim); }
+
+        .btn-amber {
+            background: rgba(245, 158, 11, 0.15); color: var(--amber);
+            border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 13px 28px;
+            transition: background 0.2s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-amber:hover { background: rgba(245, 158, 11, 0.25); }
+
+        /* Spinner */
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.25);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+        .btn-loading .spinner { display: block; }
+        .btn-loading .btn-text { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Toast */
+        #toast-area {
+            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+        }
+        .toast {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 22px; border-radius: 10px; font-size: 0.82rem; font-weight: 600;
+            background: rgba(15, 4, 22, 0.95); backdrop-filter: blur(8px);
+            border: 1px solid rgba(244, 63, 94, 0.12);
+            animation: slideIn 0.3s ease forwards; pointer-events: auto;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        .toast.ok  { border-left: 3px solid #10b981; }
+        .toast.err { border-left: 3px solid var(--rose); }
+        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div id="toast-area"></div>
+
+    <!-- ─── LOGIN OVERLAY ─── -->
+    <div id="login-screen" class="fixed inset-0 bg-black/75 backdrop-blur-xl flex items-center justify-center z-[100]">
+        <div class="panel p-10 w-full max-w-sm text-center shadow-2xl" style="border-color:rgba(244,63,94,0.2)">
+            <!-- Hexagon logo -->
+            <div style="width:64px;height:64px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;position:relative">
+                <svg width="64" height="64" viewBox="0 0 64 64" style="position:absolute">
+                    <polygon points="32,2 62,18 62,46 32,62 2,46 2,18" fill="none" stroke="url(#lg)" stroke-width="1.5"/>
+                    <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs>
+                </svg>
+                <i class="fa-solid fa-lock" style="color:var(--rose);position:relative;z-index:1"></i>
+            </div>
+
+            <h2 style="font-size:1.5rem;font-weight:800;color:white;margin-bottom:6px">Admin Access</h2>
+            <p style="font-size:0.8rem;color:#7c6a8a;margin-bottom:28px;font-family:'IBM Plex Mono',monospace">Hashinika Portfolio CMS</p>
+
+            <input type="password" id="admin-pass"
+                   class="field text-center mb-4"
+                   style="letter-spacing:0.3em;font-size:1.1rem"
+                   placeholder="••••••••">
+            <p id="login-err" class="hidden mb-4" style="font-size:0.75rem;font-weight:700;color:var(--rose);background:rgba(244,63,94,0.08);padding:8px;border-radius:8px;font-family:'IBM Plex Mono',monospace">
+                Authentication failed
+            </p>
+
+            <button id="login-btn" onclick="checkPass()"
+                    style="width:100%;background:white;color:#060209;border:none;border-radius:10px;padding:14px;font-weight:800;cursor:pointer;transition:opacity 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Syne',sans-serif"
+                    onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                <span class="spinner" style="border-top-color:#060209 !important"></span>
+                <span class="btn-text">Unlock Dashboard</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ─── ADMIN PANEL ─── -->
+    <div id="admin-panel" class="hidden max-w-6xl mx-auto pt-4">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+            <div>
+                <h1 style="font-size:1.8rem;font-weight:800;color:white;letter-spacing:-0.02em">
+                    <span style="background:linear-gradient(135deg,var(--rose),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Hashinika</span>
+                    &nbsp;CMS
+                </h1>
+                <p style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:#10b981;margin-top:8px;background:rgba(16,185,129,0.08);display:inline-block;padding:4px 12px;border-radius:999px">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Connected
+                </p>
+            </div>
+            <button onclick="location.reload()"
+                    style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:10px 20px;border-radius:8px;border:1px solid rgba(244,63,94,0.2);color:#7c6a8a;background:transparent;cursor:pointer;transition:color 0.2s,border-color 0.2s"
+                    onmouseover="this.style.color='var(--rose)';this.style.borderColor='var(--rose)'"
+                    onmouseout="this.style.color='#7c6a8a';this.style.borderColor='rgba(244,63,94,0.2)'">
+                Sign Out
+            </button>
+        </header>
+
+        <!-- Tab bar -->
+        <div class="panel p-1.5 flex gap-1 mb-8 overflow-x-auto" style="width:max-content;border-radius:999px">
+            <button onclick="switchTab('tab-hero', this)"   class="tab-btn active"><i class="fa-regular fa-id-badge mr-2"></i>Profile</button>
+            <button onclick="switchTab('tab-edu', this)"    class="tab-btn"><i class="fa-solid fa-graduation-cap mr-2"></i>Education</button>
+            <button onclick="switchTab('tab-ventures', this)" class="tab-btn"><i class="fa-solid fa-rocket mr-2"></i>Ventures</button>
+            <button onclick="switchTab('tab-proj', this)"   class="tab-btn"><i class="fa-brands fa-github mr-2"></i>GitHub</button>
+        </div>
+
+        <!-- ═══ TAB: PROFILE ═══ -->
+        <div id="tab-hero" class="tab-content active space-y-8">
+            <div class="panel p-8">
+                <h3 style="color:white;font-weight:800;font-size:1rem;margin-bottom:24px;display:flex;align-items:center;gap:10px">
+                    <span style="width:32px;height:32px;border-radius:8px;background:rgba(244,63,94,0.12);display:flex;align-items:center;justify-content:center">
+                        <i class="fa-solid fa-id-card" style="color:var(--rose)"></i>
+                    </span>
+                    Core Information
+                </h3>
+                <form id="heroForm">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div><label class="label">Full Name</label><input type="text" id="h_name" class="field" required></div>
+                        <div><label class="label">Professional Headline</label><input type="text" id="h_headline" class="field" required></div>
+                        <div><label class="label">Phone Number</label><input type="text" id="h_phone" class="field"></div>
+                        <div><label class="label">Email Address</label><input type="email" id="h_email" class="field"></div>
+                        <div style="grid-column:1/-1">
+                            <label class="label">Resume URL (Google Drive)</label>
+                            <input type="url" id="h_cv" class="field">
+                        </div>
+                        <div style="grid-column:1/-1">
+                            <label class="label">Executive Bio</label>
+                            <textarea id="h_bio" rows="4" class="field" style="resize:none"></textarea>
+                        </div>
+                    </div>
+                    <div style="margin-top:28px;display:flex;justify-content:flex-end">
+                        <button type="submit" id="hero-save-btn" class="btn-rose">
+                            <span class="spinner"></span><span class="btn-text">Save Profile</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Social Links -->
+            <div class="panel p-8">
+                <h3 style="color:white;font-weight:800;font-size:1rem;margin-bottom:24px;display:flex;align-items:center;gap:10px">
+                    <span style="width:32px;height:32px;border-radius:8px;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center">
+                        <i class="fa-solid fa-link" style="color:var(--amber)"></i>
+                    </span>
+                    Social Links
+                </h3>
+                <form id="socialForm" style="display:flex;gap:12px;margin-bottom:24px">
+                    <input type="url" id="s_url" class="field" placeholder="https://linkedin.com/in/..." required style="flex:1">
+                    <button type="submit" id="social-add-btn" class="btn-amber">
+                        <span class="spinner"></span><span class="btn-text">Add</span>
+                    </button>
+                </form>
+                <div id="social-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+            </div>
+        </div>
+
+        <!-- ═══ TAB: EDUCATION ═══ -->
+        <div id="tab-edu" class="tab-content">
+            <div class="panel p-8 mb-8">
+                <h3 style="color:white;font-weight:800;font-size:1rem;margin-bottom:24px;display:flex;align-items:center;gap:10px">
+                    <span style="width:32px;height:32px;border-radius:8px;background:rgba(52,211,153,0.12);display:flex;align-items:center;justify-content:center">
+                        <i class="fa-solid fa-plus" style="color:#34d399"></i>
+                    </span>
+                    Add Qualification
+                </h3>
+                <form id="eduForm" class="grid md:grid-cols-3 gap-6 items-end">
+                    <div><label class="label">Degree / Title</label><input type="text"  id="e_title" class="field" required></div>
+                    <div><label class="label">Institution</label><input type="text"      id="e_inst"  class="field" required></div>
+                    <div><label class="label">Year / Duration</label><input type="text" id="e_year"  class="field" required></div>
+                    <div style="grid-column:1/-1;display:flex;justify-content:flex-end;margin-top:4px">
+                        <button type="submit" id="edu-save-btn" class="btn-rose">
+                            <span class="spinner"></span><span class="btn-text">Save Record</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div id="edu-list" class="space-y-4"></div>
+        </div>
+
+        <!-- ═══ TAB: VENTURES ═══ -->
+        <div id="tab-ventures" class="tab-content">
+            <div class="panel p-8 mb-8">
+                <h3 style="color:white;font-weight:800;font-size:1rem;margin-bottom:24px;display:flex;align-items:center;gap:10px">
+                    <span style="width:32px;height:32px;border-radius:8px;background:rgba(244,63,94,0.12);display:flex;align-items:center;justify-content:center">
+                        <i class="fa-solid fa-rocket" style="color:var(--rose)"></i>
+                    </span>
+                    Add Venture / Experience
+                </h3>
+                <form id="ventureForm" class="grid md:grid-cols-2 gap-6 items-end">
+                    <div><label class="label">Company / Venture Name</label><input type="text" id="v_name"  class="field" required></div>
+                    <div><label class="label">Role / Title</label><input type="text"            id="v_role"  class="field" required></div>
+                    <div><label class="label">Period (e.g. 2026 – Present)</label><input type="text" id="v_year" class="field" required></div>
+                    <div></div>
+                    <div style="grid-column:1/-1">
+                        <label class="label">Description (one bullet per line)</label>
+                        <textarea id="v_desc" rows="4" class="field" style="resize:none" placeholder="Leading a software lab...&#10;Managing full lifecycle..."></textarea>
+                    </div>
+                    <div style="grid-column:1/-1;display:flex;justify-content:flex-end">
+                        <button type="submit" id="venture-save-btn" class="btn-rose">
+                            <span class="spinner"></span><span class="btn-text">Save Venture</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div id="venture-list" class="space-y-4"></div>
+        </div>
+
+        <!-- ═══ TAB: GITHUB ═══ -->
+        <div id="tab-proj" class="tab-content">
+            <div class="panel p-10 text-center">
+                <div style="width:72px;height:72px;background:rgba(6,2,9,0.8);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;border:1px solid rgba(244,63,94,0.15)">
+                    <i class="fa-brands fa-github" style="font-size:2.2rem;color:white"></i>
+                </div>
+                <h3 style="font-size:1.5rem;font-weight:800;color:white;margin-bottom:8px">Automated GitHub Sync</h3>
+                <p style="color:#7c6a8a;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;font-size:0.88rem;line-height:1.7">
+                    The portfolio auto-fetches repositories from
+                    <a href="https://github.com/Hashi24-SE" target="_blank" style="color:var(--rose);font-family:'IBM Plex Mono',monospace">Hashi24-SE</a>
+                    with live stats. No manual updates needed.
+                </p>
+                <div class="panel p-6 inline-block text-left" style="border-color:rgba(244,63,94,0.15)">
+                    <p style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.18em;color:#7c6a8a;margin-bottom:16px;text-align:center">Maintenance Tips</p>
+                    <ul style="font-size:0.85rem;color:#7c6a8a;list-style:none;padding:0;space-y:10px">
+                        <li style="display:flex;gap:10px;align-items:start;margin-bottom:10px"><i class="fa-solid fa-diamond" style="color:var(--rose);font-size:0.5rem;margin-top:6px"></i> Keep repos <strong style="color:var(--text)">Public</strong> to appear in portfolio.</li>
+                        <li style="display:flex;gap:10px;align-items:start;margin-bottom:10px"><i class="fa-solid fa-diamond" style="color:var(--rose);font-size:0.5rem;margin-top:6px"></i> Add detailed <strong style="color:var(--text)">Descriptions</strong> on GitHub.</li>
+                        <li style="display:flex;gap:10px;align-items:start"><i class="fa-solid fa-diamond" style="color:var(--rose);font-size:0.5rem;margin-top:6px"></i> Add <strong style="color:var(--text)">Topics</strong> (java, android, etc.) for tags.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy }
+            from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        /* ═══ CONFIGURE FIREBASE — same config as index.html ═══ */
+        const firebaseConfig = {
+            apiKey:            "AIzaSyCuq8AVebliPvo16zJe7zYe9PdYNBKmlBU",
+            authDomain:        "hashinika-portfolio-db.firebaseapp.com",
+            projectId:         "hashinika-portfolio-db",
+            storageBucket:     "hashinika-portfolio-db.firebasestorage.app",
+            messagingSenderId: "883891632101",
+            appId:             "1:883891632101:web:6964e63b94b3d896e8e10c",
+            measurementId:     "G-BVRSRWCMYY"
+        };
+
+        const app  = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db   = getFirestore(app);
+
+        /* ─── TOAST ─── */
+        function toast(msg, type = 'ok') {
+            const c  = document.getElementById('toast-area');
+            const el = document.createElement('div');
+            el.className = `toast ${type}`;
+            el.innerHTML = `<i class="fa-solid ${type==='ok' ? 'fa-circle-check' : 'fa-circle-xmark'}" style="color:${type==='ok'?'#10b981':'var(--rose)'}"></i> ${msg}`;
+            c.appendChild(el);
+            setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 4000);
+        }
+
+        /* ─── LOADING STATE ─── */
+        function setLoad(id, on) {
+            const b = document.getElementById(id);
+            if (on) { b.classList.add('btn-loading'); b.disabled = true; }
+            else    { b.classList.remove('btn-loading'); b.disabled = false; }
+        }
+
+        /* ─── TAB SWITCH ─── */
+        window.switchTab = (id, btn) => {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        };
+
+        /* ─── LOGIN ─── */
+        document.getElementById('admin-pass').addEventListener('keydown', e => { if (e.key === 'Enter') checkPass(); });
+
+        window.checkPass = async () => {
+            const pass = document.getElementById('admin-pass').value;
+            const err  = document.getElementById('login-err');
+            /* ⚠️ Change this password! */
+            if (pass !== "hashinika123") { err.classList.remove('hidden'); return; }
+            err.classList.add('hidden');
+            setLoad('login-btn', true);
+            try {
+                await signInAnonymously(auth);
+            } catch(e) {
+                setLoad('login-btn', false);
+                err.textContent = "Error: " + e.message;
+                err.classList.remove('hidden');
+            }
+        };
+
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-panel').classList.remove('hidden');
+                loadAll();
+            }
+        });
+
+        /* ─── LOAD ALL ─── */
+        async function loadAll() {
+            try {
+                const h = await getDoc(doc(db, "siteConfig", "hero"));
+                if (h.exists()) {
+                    const d = h.data();
+                    ['name','headline','phone','email','cv','bio'].forEach(k => {
+                        const el = document.getElementById(`h_${k}`);
+                        if (el) el.value = d[k] || '';
+                    });
+                }
+            } catch(e) { toast('Error loading profile: ' + e.message, 'err'); }
+            loadSocials(); loadEdu(); loadVentures();
+        }
+
+        /* ─── HERO FORM ─── */
+        document.getElementById('heroForm').onsubmit = async e => {
+            e.preventDefault(); setLoad('hero-save-btn', true);
+            try {
+                await setDoc(doc(db, "siteConfig", "hero"), {
+                    name:     document.getElementById('h_name').value,
+                    headline: document.getElementById('h_headline').value,
+                    phone:    document.getElementById('h_phone').value,
+                    email:    document.getElementById('h_email').value,
+                    cv:       document.getElementById('h_cv').value,
+                    bio:      document.getElementById('h_bio').value
+                }, { merge: true });
+                toast('Profile saved successfully ✦');
+            } catch(e) { toast('Save failed: ' + e.message, 'err'); }
+            setLoad('hero-save-btn', false);
+        };
+
+        /* ─── SOCIALS ─── */
+        document.getElementById('socialForm').onsubmit = async e => {
+            e.preventDefault(); setLoad('social-add-btn', true);
+            try {
+                await addDoc(collection(db, "socials"), { url: document.getElementById('s_url').value, timestamp: new Date() });
+                document.getElementById('s_url').value = '';
+                toast('Social link added'); loadSocials();
+            } catch(e) { toast('Error: ' + e.message, 'err'); }
+            setLoad('social-add-btn', false);
+        };
+
+        async function loadSocials() {
+            try {
+                const snap = await getDocs(query(collection(db, "socials"), orderBy("timestamp","asc")));
+                document.getElementById('social-list').innerHTML = snap.docs.map(d => `
+                    <div style="background:rgba(6,2,9,0.6);border:1px solid rgba(244,63,94,0.08);border-radius:10px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:#7c6a8a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80%">${d.data().url}</span>
+                        <button onclick="delSocial('${d.id}')" style="color:#4a3550;background:transparent;border:none;cursor:pointer;transition:color 0.2s" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='#4a3550'"><i class="fa-solid fa-trash"></i></button>
+                    </div>`).join('');
+            } catch(e) { console.error(e); }
+        }
+
+        window.delSocial = async id => {
+            if (!confirm('Delete this link?')) return;
+            try { await deleteDoc(doc(db, "socials", id)); loadSocials(); }
+            catch(e) { toast('Delete failed', 'err'); }
+        };
+
+        /* ─── EDUCATION ─── */
+        document.getElementById('eduForm').onsubmit = async e => {
+            e.preventDefault(); setLoad('edu-save-btn', true);
+            try {
+                await addDoc(collection(db, "education"), {
+                    title: document.getElementById('e_title').value,
+                    inst:  document.getElementById('e_inst').value,
+                    year:  document.getElementById('e_year').value,
+                    timestamp: new Date()
+                });
+                e.target.reset(); toast('Education record added'); loadEdu();
+            } catch(e) { toast('Error: ' + e.message, 'err'); }
+            setLoad('edu-save-btn', false);
+        };
+
+        async function loadEdu() {
+            try {
+                const snap = await getDocs(query(collection(db, "education"), orderBy("timestamp","desc")));
+                document.getElementById('edu-list').innerHTML = snap.docs.map(d => `
+                    <div style="background:rgba(6,2,9,0.6);border:1px solid rgba(244,63,94,0.08);border-radius:12px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center">
+                        <div>
+                            <h4 style="font-weight:700;color:white;font-size:1.05rem">${d.data().title}</h4>
+                            <p style="font-size:0.8rem;color:#7c6a8a;margin-top:2px">${d.data().inst} &nbsp;·&nbsp; <span style="color:var(--rose)">${d.data().year}</span></p>
+                        </div>
+                        <button onclick="delEdu('${d.id}')" style="width:38px;height:38px;border-radius:8px;background:rgba(244,63,94,0.08);color:var(--rose);border:none;cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='var(--rose);color:white'" onmouseout="this.style.background='rgba(244,63,94,0.08)'"><i class="fa-solid fa-trash"></i></button>
+                    </div>`).join('');
+            } catch(e) { console.error(e); }
+        }
+
+        window.delEdu = async id => {
+            if (!confirm('Delete?')) return;
+            try { await deleteDoc(doc(db, "education", id)); loadEdu(); }
+            catch(e) { toast('Delete failed', 'err'); }
+        };
+
+        /* ─── VENTURES ─── */
+        document.getElementById('ventureForm').onsubmit = async e => {
+            e.preventDefault(); setLoad('venture-save-btn', true);
+            try {
+                await addDoc(collection(db, "ventures"), {
+                    name:  document.getElementById('v_name').value,
+                    role:  document.getElementById('v_role').value,
+                    year:  document.getElementById('v_year').value,
+                    desc:  document.getElementById('v_desc').value,
+                    timestamp: new Date()
+                });
+                e.target.reset(); toast('Venture added'); loadVentures();
+            } catch(e) { toast('Error: ' + e.message, 'err'); }
+            setLoad('venture-save-btn', false);
+        };
+
+        async function loadVentures() {
+            try {
+                const snap = await getDocs(query(collection(db, "ventures"), orderBy("timestamp","desc")));
+                document.getElementById('venture-list').innerHTML = snap.docs.map(d => `
+                    <div style="background:rgba(6,2,9,0.6);border:1px solid rgba(244,63,94,0.08);border-radius:12px;padding:20px 24px;display:flex;justify-content:space-between;align-items:start;gap:12px">
+                        <div>
+                            <h4 style="font-weight:700;color:white;font-size:1.05rem">${d.data().name}</h4>
+                            <p style="font-size:0.75rem;font-family:'IBM Plex Mono',monospace;color:var(--rose);margin-top:2px">${d.data().role} &nbsp;·&nbsp; ${d.data().year}</p>
+                            <p style="font-size:0.8rem;color:#7c6a8a;margin-top:8px;white-space:pre-line">${d.data().desc}</p>
+                        </div>
+                        <button onclick="delVenture('${d.id}')" style="width:38px;height:38px;border-radius:8px;background:rgba(244,63,94,0.08);color:var(--rose);border:none;cursor:pointer;flex-shrink:0"><i class="fa-solid fa-trash"></i></button>
+                    </div>`).join('') || '<p style="color:#4a3550;font-style:italic;font-size:0.85rem">No ventures added yet.</p>';
+            } catch(e) { console.error(e); }
+        }
+
+        window.delVenture = async id => {
+            if (!confirm('Delete?')) return;
+            try { await deleteDoc(doc(db, "ventures", id)); loadVentures(); }
+            catch(e) { toast('Delete failed', 'err'); }
+        };
+    </script>
+</body>
+</html>

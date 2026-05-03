@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashinika Pinnagolla — Full Stack Engineer</title>
+    <meta name="description" content="Portfolio of Hashinika Pinnagolla — Java Enterprise & Native Mobile Development specialist. Founder of Nexigen.">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,900&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        :root {
+            --rose:        #f43f5e;
+            --rose-dim:    #be123c;
+            --rose-glow:   rgba(244, 63, 94, 0.18);
+            --amber:       #f59e0b;
+            --amber-dim:   #d97706;
+            --amber-glow:  rgba(245, 158, 11, 0.12);
+            --bg:          #060209;
+            --surface:     rgba(18, 6, 26, 0.72);
+            --border:      rgba(244, 63, 94, 0.10);
+            --text:        #e2d8f0;
+            --muted:       #7c6a8a;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Syne', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ─── DOT GRID BACKGROUND ─── */
+        .dot-grid {
+            position: fixed; inset: 0; z-index: -2;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* ─── WARM ORB ATMOSPHERE ─── */
+        .atm-orb {
+            position: fixed; border-radius: 50%; filter: blur(120px);
+            z-index: -1; pointer-events: none;
+        }
+        .atm-orb-1 {
+            width: 55vw; height: 55vw; max-width: 680px; max-height: 680px;
+            background: radial-gradient(circle, rgba(244, 63, 94, 0.14), transparent 70%);
+            top: -15%; left: -20%;
+            animation: drift1 22s ease-in-out infinite alternate;
+        }
+        .atm-orb-2 {
+            width: 50vw; height: 50vw; max-width: 600px; max-height: 600px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.10), transparent 70%);
+            bottom: -10%; right: -15%;
+            animation: drift2 28s ease-in-out infinite alternate;
+        }
+        @keyframes drift1 { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(25vw,40vh) scale(1.3)} }
+        @keyframes drift2 { 0%{transform:translate(0,0) scale(1.2)} 100%{transform:translate(-30vw,-30vh) scale(0.85)} }
+
+        /* ─── PAGE LOADER ─── */
+        #page-loader {
+            position: fixed; inset: 0; z-index: 9999;
+            background: var(--bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+        }
+        #page-loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-diamond {
+            width: 44px; height: 44px;
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, var(--rose), var(--amber)) 1;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            animation: spin 1.2s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px; letter-spacing: 0.2em;
+            text-transform: uppercase; color: var(--muted);
+        }
+
+        /* ─── SKELETON ─── */
+        .sk {
+            background: linear-gradient(90deg,
+                rgba(40,16,48,0.7) 25%, rgba(70,24,60,0.5) 50%, rgba(40,16,48,0.7) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.6s infinite;
+            border-radius: 6px;
+        }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        /* ─── FADE IN ─── */
+        .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* ─── GLASS SURFACE ─── */
+        .surface {
+            background: var(--surface);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--border);
+        }
+
+        /* ─── HEADER / NAV ─── */
+        #site-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            background: rgba(6, 2, 9, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(244, 63, 94, 0.08);
+            transition: background 0.3s;
+        }
+
+        .nav-link {
+            font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--muted);
+            transition: color 0.25s;
+            position: relative; padding-bottom: 2px;
+        }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+            background: var(--rose); transform: scaleX(0);
+            transition: transform 0.25s ease;
+        }
+        .nav-link:hover { color: var(--text); }
+        .nav-link:hover::after { transform: scaleX(1); }
+        .nav-link.active { color: var(--rose); }
+        .nav-link.active::after { transform: scaleX(1); }
+
+        /* Mobile menu */
+        #mobile-menu {
+            display: none; flex-direction: column;
+            position: absolute; top: 100%; left: 0; right: 0;
+            background: rgba(6, 2, 9, 0.98); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(244, 63, 94, 0.1);
+            padding: 8px 0 16px;
+        }
+        #mobile-menu.open { display: flex; }
+        #mobile-menu a {
+            padding: 14px 28px; color: var(--muted);
+            font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: color 0.2s, background 0.2s;
+        }
+        #mobile-menu a:hover { color: var(--rose); background: rgba(244, 63, 94, 0.04); }
+        #mobile-menu a.active { color: var(--rose); }
+        #mobile-menu .mob-resume {
+            margin: 12px 28px 0; background: var(--rose); color: white; text-align: center;
+            border-radius: 4px; border-bottom: none; font-size: 10px;
+        }
+        #mobile-menu .mob-resume:hover { background: var(--rose-dim); }
+
+        .hamburger span {
+            display: block; width: 22px; height: 1.5px; background: var(--muted);
+            border-radius: 1px; transition: transform 0.3s, opacity 0.3s;
+        }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+        /* ─── LOGO / WORDMARK ─── */
+        .logo-wordmark {
+            font-family: 'Playfair Display', serif;
+            font-style: italic; font-weight: 700;
+            background: linear-gradient(135deg, var(--rose), var(--amber));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ─── SECTION TITLES ─── */
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-style: italic; font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, var(--text) 60%, var(--rose) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+        .section-eyebrow {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--rose); display: flex; align-items: center; gap: 10px;
+        }
+        .section-eyebrow::before, .section-eyebrow::after {
+            content: ''; flex: 1; height: 1px; background: rgba(244, 63, 94, 0.25);
+        }
+
+        /* ─── RESUME BTN ─── */
+        .resume-btn {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase;
+            border: 1px solid var(--rose); color: var(--rose);
+            padding: 10px 24px; border-radius: 3px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .resume-btn:hover { background: var(--rose); color: white; }
+
+        /* ─── PROFILE HEX FRAME ─── */
+        .hex-frame {
+            position: relative; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .hex-frame::before {
+            content: '';
+            position: absolute; inset: -3px;
+            background: linear-gradient(135deg, var(--rose), var(--amber), var(--rose));
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            animation: rotateGrad 6s linear infinite;
+        }
+        @keyframes rotateGrad {
+            0%   { background: linear-gradient(0deg,   var(--rose), var(--amber)); }
+            50%  { background: linear-gradient(180deg, var(--amber), var(--rose)); }
+            100% { background: linear-gradient(360deg, var(--rose), var(--amber)); }
+        }
+        .hex-frame img {
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            position: relative; z-index: 1;
+            object-fit: cover;
+        }
+        .hex-bg {
+            position: absolute; inset: 0;
+            background: var(--bg);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            z-index: 0;
+        }
+
+        /* ─── HERO CONTACT ROW ─── */
+        .contact-chip {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.72rem; color: var(--muted);
+            display: flex; align-items: center; gap: 6px;
+            transition: color 0.2s;
+        }
+        .contact-chip:hover { color: var(--rose); }
+        .contact-chip i { color: var(--rose); font-size: 0.65rem; }
+
+        /* ─── GITHUB LANGUAGE BAR ─── */
+        .lang-bar { display: flex; height: 8px; width: 100%; border-radius: 20px; overflow: hidden; background: rgba(30,10,35,0.6); }
+        .lang-seg { height: 100%; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+
+        /* ─── PROJECT CARD ─── */
+        .proj-card {
+            background: rgba(15, 4, 22, 0.65);
+            border: 1px solid rgba(244, 63, 94, 0.08);
+            border-radius: 12px; padding: 28px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            backdrop-filter: blur(10px);
+        }
+        .proj-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(244, 63, 94, 0.4);
+            box-shadow: 0 12px 40px rgba(244, 63, 94, 0.14);
+        }
+
+        /* ─── VENTURE CARD ─── */
+        .venture-card {
+            border-left: 2px solid var(--rose);
+            padding-left: 24px;
+            transition: padding-left 0.2s;
+        }
+        .venture-card:hover { padding-left: 30px; }
+
+        /* ─── EDUCATION TIMELINE ─── */
+        .edu-dot {
+            width: 14px; height: 14px;
+            background: linear-gradient(135deg, var(--rose), var(--amber));
+            border-radius: 50%; border: 3px solid var(--bg);
+            flex-shrink: 0;
+        }
+
+        /* ─── TAG ─── */
+        .tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+            background: rgba(244, 63, 94, 0.08); color: var(--rose);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            padding: 3px 10px; border-radius: 3px;
+        }
+        .tag-amber {
+            background: rgba(245, 158, 11, 0.08); color: var(--amber);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        /* ─── CONTACT FORM ─── */
+        .field {
+            width: 100%; background: rgba(15, 4, 22, 0.7);
+            border: 1px solid rgba(244, 63, 94, 0.12); border-radius: 8px;
+            color: var(--text); padding: 14px 18px;
+            font-family: 'Syne', sans-serif; font-size: 0.9rem;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            outline: none;
+        }
+        .field:focus {
+            border-color: var(--rose);
+            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.1);
+        }
+        .field::placeholder { color: var(--muted); }
+
+        /* ─── SOCIAL ICON ─── */
+        .social-link {
+            width: 44px; height: 44px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(244, 63, 94, 0.2); color: var(--muted);
+            transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+        }
+        .social-link:hover {
+            background: var(--rose-glow); color: var(--rose);
+            border-color: var(--rose); transform: scale(1.1);
+        }
+
+        /* ─── SCROLL PROGRESS ─── */
+        #scroll-bar {
+            position: fixed; top: 0; left: 0; height: 2px; z-index: 9999;
+            background: linear-gradient(90deg, var(--rose), var(--amber));
+            width: 0%; transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+    <!-- Scroll progress bar -->
+    <div id="scroll-bar"></div>
+
+    <!-- Background -->
+    <div class="dot-grid"></div>
+    <div class="atm-orb atm-orb-1"></div>
+    <div class="atm-orb atm-orb-2"></div>
+
+    <!-- Loader -->
+    <div id="page-loader">
+        <div class="relative w-16 h-16 flex items-center justify-center">
+            <svg width="64" height="64" viewBox="0 0 64 64" class="absolute animate-spin" style="animation-duration:2.5s">
+                <polygon points="32,2 62,18 62,46 32,62 2,46 2,18" fill="none" stroke="url(#gg)" stroke-width="1.5"/>
+                <defs>
+                    <linearGradient id="gg" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#f43f5e"/>
+                        <stop offset="100%" stop-color="#f59e0b"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#f43f5e;letter-spacing:2px">HP</span>
+        </div>
+        <p class="loader-text">Initializing portfolio…</p>
+    </div>
+
+    <!-- Header -->
+    <header id="site-header">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#home" id="nav-logo" class="logo-wordmark text-xl">Hashinika.</a>
+            <nav class="hidden lg:flex items-center gap-10 text-slate-400">
+                <a href="#home"      class="nav-link" data-sec="home">Home</a>
+                <a href="#skills"    class="nav-link" data-sec="skills">Skills</a>
+                <a href="#projects"  class="nav-link" data-sec="projects">Projects</a>
+                <a href="#ventures"  class="nav-link" data-sec="ventures">Ventures</a>
+                <a href="#education" class="nav-link" data-sec="education">Education</a>
+                <a href="#contact"   class="nav-link" data-sec="contact">Contact</a>
+                <a id="cv-btn-desktop" href="#" class="resume-btn ml-2">Get Resume</a>
+            </nav>
+            <button id="hamburger-btn" class="hamburger lg:hidden flex flex-col gap-[5px] p-2" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+        <div id="mobile-menu">
+            <a href="#home"      class="nav-link" data-sec="home"      onclick="closeMenu()">Home</a>
+            <a href="#skills"    class="nav-link" data-sec="skills"    onclick="closeMenu()">Skills</a>
+            <a href="#projects"  class="nav-link" data-sec="projects"  onclick="closeMenu()">Projects</a>
+            <a href="#ventures"  class="nav-link" data-sec="ventures"  onclick="closeMenu()">Ventures</a>
+            <a href="#education" class="nav-link" data-sec="education" onclick="closeMenu()">Education</a>
+            <a href="#contact"   class="nav-link" data-sec="contact"   onclick="closeMenu()">Contact</a>
+            <a id="cv-btn-mobile" href="#" class="mob-resume" onclick="closeMenu()">Get Resume</a>
+        </div>
+    </header>
+
+    <main class="pt-16">
+        <div class="container mx-auto px-6 md:px-12">
+
+            <!-- ═══ HERO ═══ -->
+            <section id="home" class="min-h-screen flex flex-col justify-center items-center text-center fade-in" style="padding-top:80px; padding-bottom: 60px;">
+
+                <!-- Profile Hexagon -->
+                <div class="hex-frame mb-10" style="width:172px; height:172px;">
+                    <div class="hex-bg"></div>
+                    <img id="avatar-img"
+                         src="https://github.com/Hashi24-SE.png"
+                         onerror="this.src='https://ui-avatars.com/api/?name=Hashinika+Pinnagolla&background=1a0610&color=f43f5e&size=200&bold=true'"
+                         alt="Hashinika Pinnagolla"
+                         width="160" height="160"
+                         style="width:160px;height:160px; position:relative;z-index:1;">
+                </div>
+
+                <!-- Skeleton while loading -->
+                <div id="hero-skeleton" class="w-full max-w-2xl space-y-5 mb-6">
+                    <div class="sk h-14 w-72 mx-auto rounded-lg"></div>
+                    <div class="sk h-7 w-96 mx-auto rounded-lg" style="max-width:90%"></div>
+                    <div class="sk h-4 w-full mx-auto rounded"></div>
+                    <div class="sk h-4 w-5/6 mx-auto rounded"></div>
+                    <div class="flex justify-center gap-4 mt-6">
+                        <div class="sk h-3 w-40 rounded"></div>
+                        <div class="sk h-3 w-32 rounded"></div>
+                    </div>
+                </div>
+
+                <!-- Real content -->
+                <div id="hero-content" style="display:none;opacity:0;transition:opacity 0.5s ease" class="w-full max-w-3xl">
+                    <div class="section-eyebrow mb-5" style="max-width:220px;margin-left:auto;margin-right:auto;">Full Stack Engineer</div>
+
+                    <h1 id="h-name"
+                        class="section-title mb-4"
+                        style="font-size:clamp(2.8rem,8vw,5.5rem)">Hashinika Pinnagolla</h1>
+
+                    <p id="h-headline"
+                       style="font-family:'IBM Plex Mono',monospace;font-size:0.9rem;color:var(--rose);letter-spacing:0.05em;margin-bottom:24px"></p>
+
+                    <p id="h-bio"
+                       class="text-base leading-relaxed mb-8"
+                       style="color:var(--muted);max-width:680px;margin-left:auto;margin-right:auto;font-size:0.95rem"></p>
+
+                    <!-- Contact chips -->
+                    <div id="contact-bar" class="flex flex-wrap justify-center gap-5 mb-8"></div>
+
+                    <!-- Social icons -->
+                    <div id="social-bar" class="flex justify-center gap-4"></div>
+                </div>
+
+                <!-- Down arrow -->
+                <a href="#skills" class="absolute" style="bottom:32px;left:50%;transform:translateX(-50%);animation:bounce 2s infinite">
+                    <i class="fa-solid fa-chevron-down" style="color:var(--muted);font-size:0.8rem"></i>
+                </a>
+            </section>
+
+            <!-- ═══ SKILLS ═══ -->
+            <section id="skills" class="py-24 fade-in">
+                <div class="section-eyebrow mb-4">Technical Ecosystem</div>
+                <h2 class="section-title text-4xl md:text-5xl text-center mb-16">Expertise &amp; Stack</h2>
+
+                <div class="max-w-5xl mx-auto">
+                    <!-- GitHub stats cards -->
+                    <div id="github-stats-container" class="grid md:grid-cols-2 gap-6 mb-10">
+                        <div class="sk" style="height:140px;border-radius:12px"></div>
+                        <div class="sk" style="height:140px;border-radius:12px"></div>
+                    </div>
+
+                    <!-- Language bar -->
+                    <p style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:12px">
+                        Language Distribution Across Repositories
+                    </p>
+                    <div id="github-bar" class="lang-bar mb-6">
+                        <div class="sk w-full" style="border-radius:20px;height:8px"></div>
+                    </div>
+                    <div id="skills-legend" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+
+                    <!-- Static skill groups -->
+                    <div class="grid md:grid-cols-3 gap-6 mt-12">
+                        <div class="proj-card">
+                            <div class="flex items-center gap-3 mb-5">
+                                <div style="width:36px;height:36px;border-radius:8px;background:rgba(244,63,94,0.12);display:flex;align-items:center;justify-content:center">
+                                    <i class="fa-brands fa-java" style="color:var(--rose)"></i>
+                                </div>
+                                <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text)">Backend</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tag">Java EE</span><span class="tag">EJB</span><span class="tag">Servlets</span>
+                                <span class="tag">JSP</span><span class="tag">Hibernate</span><span class="tag">Maven</span>
+                                <span class="tag">Payara</span>
+                            </div>
+                        </div>
+                        <div class="proj-card">
+                            <div class="flex items-center gap-3 mb-5">
+                                <div style="width:36px;height:36px;border-radius:8px;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center">
+                                    <i class="fa-solid fa-mobile-screen" style="color:var(--amber)"></i>
+                                </div>
+                                <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text)">Mobile & Frontend</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tag tag-amber">Android (Java)</span><span class="tag tag-amber">React Native</span>
+                                <span class="tag tag-amber">Expo</span><span class="tag tag-amber">HTML5</span>
+                                <span class="tag tag-amber">Tailwind</span>
+                            </div>
+                        </div>
+                        <div class="proj-card">
+                            <div class="flex items-center gap-3 mb-5">
+                                <div style="width:36px;height:36px;border-radius:8px;background:rgba(244,63,94,0.08);display:flex;align-items:center;justify-content:center">
+                                    <i class="fa-solid fa-database" style="color:var(--rose)"></i>
+                                </div>
+                                <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text)">Architecture</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tag">GoF Patterns</span><span class="tag">MVC</span>
+                                <span class="tag">RBAC</span><span class="tag">MySQL</span>
+                                <span class="tag">Firebase</span><span class="tag">Git</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ PROJECTS ═══ -->
+            <section id="projects" class="py-24 fade-in">
+                <div class="section-eyebrow mb-4">GitHub Repositories</div>
+                <h2 class="section-title text-4xl md:text-5xl text-center mb-4">Featured Work</h2>
+                <p style="text-align:center;color:var(--muted);font-size:0.85rem;font-family:'IBM Plex Mono',monospace;margin-bottom:52px">
+                    Live-synced from <span style="color:var(--rose)">Hashi24-SE</span>
+                </p>
+
+                <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                    <!-- Skeleton cards -->
+                    <div class="proj-card space-y-3"><div class="sk h-3 w-16 rounded"></div><div class="sk h-6 w-40 rounded"></div><div class="sk h-3 w-full rounded"></div><div class="sk h-3 w-4/5 rounded"></div><div class="sk h-3 w-2/3 mt-4 rounded"></div></div>
+                    <div class="proj-card space-y-3"><div class="sk h-3 w-16 rounded"></div><div class="sk h-6 w-40 rounded"></div><div class="sk h-3 w-full rounded"></div><div class="sk h-3 w-4/5 rounded"></div><div class="sk h-3 w-2/3 mt-4 rounded"></div></div>
+                    <div class="proj-card space-y-3 hidden md:block"><div class="sk h-3 w-16 rounded"></div><div class="sk h-6 w-40 rounded"></div><div class="sk h-3 w-full rounded"></div><div class="sk h-3 w-4/5 rounded"></div><div class="sk h-3 w-2/3 mt-4 rounded"></div></div>
+                </div>
+            </section>
+
+            <!-- ═══ VENTURES & EXPERIENCE ═══ -->
+            <section id="ventures" class="py-24 fade-in">
+                <div class="section-eyebrow mb-4">Professional Journey</div>
+                <h2 class="section-title text-4xl md:text-5xl text-center mb-16">Ventures &amp; Experience</h2>
+
+                <div id="ventures-list" class="max-w-3xl mx-auto space-y-10">
+                    <!-- Default: Nexigen (from CV) -->
+                    <div class="venture-card">
+                        <div class="flex flex-wrap justify-between items-start gap-2 mb-3">
+                            <div>
+                                <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--text)">Nexigen</h3>
+                                <p style="font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--rose);margin-top:2px">Founder &amp; Lead Developer</p>
+                            </div>
+                            <span class="tag" style="margin-top:4px">2026 — Present</span>
+                        </div>
+                        <ul style="color:var(--muted);font-size:0.88rem;line-height:1.8;list-style:none;padding:0">
+                            <li style="display:flex;gap:8px;align-items:start;margin-bottom:4px"><span style="color:var(--rose);margin-top:4px">◆</span> Leading a personal software lab focused on end-to-end enterprise-grade &amp; mobile application delivery.</li>
+                            <li style="display:flex;gap:8px;align-items:start"><span style="color:var(--rose);margin-top:4px">◆</span> Managing full lifecycle development — from architectural design to deployment &amp; optimization.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ EDUCATION ═══ -->
+            <section id="education" class="py-24 fade-in">
+                <div class="section-eyebrow mb-4">Academic Path</div>
+                <h2 class="section-title text-4xl md:text-5xl text-center mb-16">Education</h2>
+
+                <div id="edu-timeline" class="max-w-2xl mx-auto space-y-8">
+                    <!-- Skeleton -->
+                    <div class="flex gap-6 items-start">
+                        <div class="sk" style="width:14px;height:14px;border-radius:50%;flex-shrink:0;margin-top:4px"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="sk h-3 w-24 rounded"></div>
+                            <div class="sk h-6 w-56 rounded"></div>
+                            <div class="sk h-3 w-40 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ CONTACT ═══ -->
+            <section id="contact" class="py-24 fade-in">
+                <div class="section-eyebrow mb-4">Get In Touch</div>
+                <h2 class="section-title text-4xl md:text-5xl text-center mb-6">Let's Connect</h2>
+                <p style="text-align:center;color:var(--muted);font-size:0.9rem;margin-bottom:48px;max-width:460px;margin-left:auto;margin-right:auto">
+                    Open to collaborations, enterprise projects &amp; opportunities.
+                </p>
+
+                <div class="max-w-xl mx-auto surface p-8 md:p-10" style="border-radius:16px">
+                    <form action="https://api.web3forms.com/submit" method="POST" class="space-y-5">
+                        <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY">
+                        <input type="text"  name="name"    placeholder="Your name"    class="field" required>
+                        <input type="email" name="email"   placeholder="Your email"   class="field" required>
+                        <textarea          name="message" placeholder="Your message" rows="5" class="field resize-none" required></textarea>
+                        <button type="submit"
+                            style="width:100%;background:var(--rose);color:white;padding:14px;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;transition:background 0.2s;border:none;cursor:pointer"
+                            onmouseover="this.style.background='var(--rose-dim)'"
+                            onmouseout="this.style.background='var(--rose)'">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer style="text-align:center;padding:40px 0 32px;border-top:1px solid rgba(244,63,94,0.08);margin-top:40px">
+                <p style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--muted);letter-spacing:0.08em">
+                    © 2026 &nbsp;<span id="f-name" style="color:var(--rose)">Hashinika Pinnagolla</span> &nbsp;·&nbsp; All rights reserved
+                </p>
+            </footer>
+        </div>
+    </main>
+
+    <!-- ─── CORE JS ─── -->
+    <script>
+        /* Mobile menu */
+        function toggleMenu() {
+            document.getElementById('mobile-menu').classList.toggle('open');
+            document.getElementById('hamburger-btn').classList.toggle('open');
+        }
+        function closeMenu() {
+            document.getElementById('mobile-menu').classList.remove('open');
+            document.getElementById('hamburger-btn').classList.remove('open');
+        }
+
+        /* Scroll progress */
+        window.addEventListener('scroll', () => {
+            const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+            document.getElementById('scroll-bar').style.width = pct + '%';
+        }, { passive: true });
+
+        /* Active nav */
+        const SECTIONS = ['home','skills','projects','ventures','education','contact'];
+        function updateNav() {
+            let cur = 'home';
+            SECTIONS.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && window.scrollY >= el.offsetTop - 140) cur = id;
+            });
+            document.querySelectorAll('.nav-link[data-sec]').forEach(a => {
+                a.classList.toggle('active', a.dataset.sec === cur);
+            });
+        }
+        window.addEventListener('scroll', updateNav, { passive: true });
+        updateNav();
+
+        /* Intersection observer — fade-in */
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.07 });
+        document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+        /* CV helper */
+        function setCvUrl(url) {
+            if (!url) return;
+            ['cv-btn-desktop','cv-btn-mobile'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.href = url; el.setAttribute('download', ''); }
+            });
+        }
+
+        function hideLoader() { document.getElementById('page-loader').classList.add('done'); }
+
+        function revealHero() {
+            const sk = document.getElementById('hero-skeleton');
+            const ct = document.getElementById('hero-content');
+            if (sk) sk.remove();
+            ct.style.display = 'block';
+            requestAnimationFrame(() => { ct.style.opacity = 1; });
+        }
+
+        /* Bounce keyframe for down arrow */
+        const style = document.createElement('style');
+        style.textContent = `@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}`;
+        document.head.appendChild(style);
+    </script>
+
+    <!-- ─── FIREBASE MODULE ─── -->
+    <script type="module">
+        import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy }
+                                   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        /* ═══ CONFIGURE YOUR FIREBASE PROJECT HERE ═══
+           1. Go to https://console.firebase.google.com
+           2. Create project → Add web app
+           3. Enable Firestore + Anonymous Auth
+           4. Replace the config below with yours                */
+        const firebaseConfig = {
+            apiKey:            "AIzaSyCuq8AVebliPvo16zJe7zYe9PdYNBKmlBU",
+            authDomain:        "hashinika-portfolio-db.firebaseapp.com",
+            projectId:         "hashinika-portfolio-db",
+            storageBucket:     "hashinika-portfolio-db.firebasestorage.app",
+            messagingSenderId: "883891632101",
+            appId:             "1:883891632101:web:6964e63b94b3d896e8e10c",
+            measurementId:     "G-BVRSRWCMYY"
+        };
+
+        /* ─── DEFAULT DATA (from CV — shown if Firebase not configured) ─── */
+        const DEFAULT = {
+            name:     "Hashinika Pinnagolla",
+            headline: "Java Enterprise & Native Android Development",
+            phone:    "+94 77 016 6036",
+            email:    "hashinikapinnagolla@gmail.com",
+            cv:       "",
+            bio:      "Results-oriented Software Engineering undergraduate specializing in Java Enterprise and Android Development. Expert in GoF design patterns for scalable solutions. AI-accelerated development workflows advocate. Founder of Nexigen."
+        };
+        const DEFAULT_SOCIALS = [
+            { url: "https://github.com/Hashi24-SE" },
+            { url: "https://linkedin.com/in/hashinika-pinnagolla" }
+        ];
+        const DEFAULT_EDU = [
+            { year: "2022 – Expected 2026", title: "BSc (Hons) Software Engineering", inst: "Birmingham City University, UK · Java Institute for Advanced Technology" },
+            { year: "In Progress",          title: "Azure Fundamentals (AZ-900)",      inst: "Microsoft Certification" }
+        ];
+
+        function socialIcon(url) {
+            if (url.includes('github'))   return 'fa-brands fa-github';
+            if (url.includes('linkedin')) return 'fa-brands fa-linkedin';
+            if (url.includes('twitter') || url.includes('x.com')) return 'fa-brands fa-x-twitter';
+            if (url.includes('instagram')) return 'fa-brands fa-instagram';
+            return 'fa-solid fa-link';
+        }
+
+        function renderHero(d) {
+            const el = id => document.getElementById(id);
+            el('nav-logo').textContent = 'Hashinika.';
+            el('h-name').textContent     = d.name     || '';
+            el('h-headline').textContent = d.headline || '';
+            el('h-bio').textContent      = d.bio      || '';
+            el('f-name').textContent     = d.name     || '';
+            const parts = [];
+            if (d.email) parts.push(`<a href="mailto:${d.email}" class="contact-chip"><i class="fa-solid fa-envelope"></i>${d.email}</a>`);
+            if (d.phone) parts.push(`<a href="tel:${d.phone}"   class="contact-chip"><i class="fa-solid fa-phone"></i>${d.phone}</a>`);
+            el('contact-bar').innerHTML = parts.join('');
+            if (d.cv) setCvUrl(d.cv);
+        }
+
+        function renderSocials(list) {
+            document.getElementById('social-bar').innerHTML = list.map(s => `
+                <a href="${s.url}" target="_blank" rel="noopener" class="social-link">
+                    <i class="${socialIcon(s.url)}" style="font-size:1.1rem"></i>
+                </a>`).join('');
+        }
+
+        function renderEdu(list) {
+            document.getElementById('edu-timeline').innerHTML = list.length
+                ? list.map(d => `
+                    <div style="display:flex;gap:24px;align-items:start">
+                        <div class="edu-dot" style="margin-top:6px"></div>
+                        <div>
+                            <p style="font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--rose);margin-bottom:4px">${d.year}</p>
+                            <h3 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.15rem;color:var(--text);margin-bottom:2px">${d.title}</h3>
+                            <p style="font-size:0.82rem;color:var(--muted);font-style:italic">${d.inst}</p>
+                        </div>
+                    </div>`).join('')
+                : `<p style="color:var(--muted);font-style:italic">No records yet.</p>`;
+        }
+
+        async function loadFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db  = getFirestore(app);
+
+                const [hSnap, sSnap, eSnap] = await Promise.all([
+                    getDoc(doc(db, "siteConfig", "hero")),
+                    getDocs(query(collection(db, "socials"),   orderBy("timestamp","asc"))),
+                    getDocs(query(collection(db, "education"), orderBy("timestamp","desc")))
+                ]);
+
+                renderHero(hSnap.exists() ? hSnap.data() : DEFAULT);
+                renderSocials(sSnap.docs.length
+                    ? sSnap.docs.map(d => d.data())
+                    : DEFAULT_SOCIALS);
+                renderEdu(eSnap.docs.length
+                    ? eSnap.docs.map(d => d.data())
+                    : DEFAULT_EDU);
+
+            } catch(_) {
+                /* Firebase not configured — fall back to defaults */
+                renderHero(DEFAULT);
+                renderSocials(DEFAULT_SOCIALS);
+                renderEdu(DEFAULT_EDU);
+            }
+
+            revealHero();
+        }
+
+        /* ─── GITHUB MODULE ─── */
+        async function loadGitHub() {
+            const GITHUB = "Hashi24-SE";
+            const COLORS  = ["#f43f5e","#f59e0b","#a78bfa","#34d399","#60a5fa","#fb923c","#e879f9"];
+
+            try {
+                /* Stats cards */
+                document.getElementById('github-stats-container').innerHTML = `
+                    <img class="w-full rounded-xl" alt="GitHub Stats"
+                         src="https://github-readme-stats.vercel.app/api?username=${GITHUB}&show_icons=true&theme=transparent&hide_border=true&title_color=f43f5e&icon_color=f59e0b&text_color=7c6a8a&bg_color=06020900"/>
+                    <img class="w-full rounded-xl" alt="Top Langs"
+                         src="https://github-readme-stats.vercel.app/api/top-langs/?username=${GITHUB}&layout=compact&theme=transparent&hide_border=true&title_color=f43f5e&text_color=7c6a8a&bg_color=06020900"/>
+                `;
+
+                /* Repos */
+                const res   = await fetch(`https://api.github.com/users/${GITHUB}/repos?sort=updated&per_page=15`);
+                const repos = await res.json();
+                if (!Array.isArray(repos)) throw new Error('Bad response');
+
+                /* Language bar */
+                const langData = {}; let total = 0;
+                repos.forEach(r => { if (r.language) { langData[r.language] = (langData[r.language]||0)+1; total++; } });
+                const sorted = Object.keys(langData).sort((a,b) => langData[b]-langData[a]);
+
+                document.getElementById('github-bar').innerHTML = sorted.map((l,i) =>
+                    `<div class="lang-seg" style="width:${(langData[l]/total*100).toFixed(1)}%;background:${COLORS[i%COLORS.length]}"></div>`
+                ).join('');
+
+                document.getElementById('skills-legend').innerHTML = sorted.slice(0,8).map((l,i) => `
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <div style="width:8px;height:8px;border-radius:50%;background:${COLORS[i%COLORS.length]};flex-shrink:0"></div>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;color:var(--text);text-transform:uppercase">${l}</span>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--muted)">${((langData[l]/total)*100).toFixed(0)}%</span>
+                    </div>`).join('');
+
+                /* Project cards */
+                const displayed = repos.filter(r => !r.fork).slice(0,9);
+                document.getElementById('project-grid').innerHTML = displayed.map(repo => `
+                    <div class="proj-card">
+                        <div>
+                            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+                                <span class="tag">${repo.language || 'Project'}</span>
+                                <span style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--muted)">
+                                    <i class="fa-solid fa-star" style="color:var(--amber);margin-right:3px"></i>${repo.stargazers_count}
+                                </span>
+                            </div>
+                            <h3 style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                                ${repo.name.replace(/-/g,' ')}
+                            </h3>
+                            <p style="font-size:0.8rem;color:var(--muted);line-height:1.7;margin-bottom:20px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">
+                                ${repo.description || 'Explore the codebase and architecture of this repository on GitHub.'}
+                            </p>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(244,63,94,0.08);padding-top:16px">
+                            <a href="${repo.html_url}" target="_blank" rel="noopener" style="color:var(--muted);transition:color 0.2s" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--muted)'">
+                                <i class="fa-brands fa-github" style="font-size:1.3rem"></i>
+                            </a>
+                            <div style="display:flex;gap:5px">
+                                ${repo.topics ? repo.topics.slice(0,2).map(t=>`<span class="tag" style="font-size:0.55rem">${t}</span>`).join('') : ''}
+                            </div>
+                        </div>
+                    </div>`).join('');
+
+            } catch(e) {
+                console.warn('GitHub fetch failed:', e);
+                document.getElementById('project-grid').innerHTML = `
+                    <div class="proj-card" style="grid-column:1/-1;text-align:center">
+                        <p style="color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:0.8rem">
+                            Visit <a href="https://github.com/Hashi24-SE" target="_blank" style="color:var(--rose)">github.com/Hashi24-SE</a> to explore repositories.
+                        </p>
+                    </div>`;
+            }
+        }
+
+        loadGitHub();
+        loadFirebase().finally(hideLoader);
+    </script>
+</body>
+</html>
