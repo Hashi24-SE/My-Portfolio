@@ -1,543 +1,513 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin · Hashinika Portfolio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CMS · Hashinika Portfolio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Space+Grotesk:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-    <style>
-        :root {
-            --rose:     #f43f5e;
-            --rose-dim: #be123c;
-            --amber:    #f59e0b;
-            --bg:       #060209;
-            --surface:  rgba(18, 6, 26, 0.75);
-            --border:   rgba(244, 63, 94, 0.10);
-        }
+<style>
+*{box-sizing:border-box;}
+body{
+  font-family:'Space Grotesk',sans-serif;
+  background-color:#050505;
+  background-image:radial-gradient(rgba(255,255,255,0.04) 1px,transparent 1px);
+  background-size:18px 18px;
+  color:#e8e4dd;
+  overflow-x:hidden;min-height:100vh;
+}
 
-        * { box-sizing: border-box; }
+/* Orbs */
+.orb-gold{position:fixed;top:-5%;left:-10%;width:min(500px,65vw);height:min(500px,65vw);background:radial-gradient(circle,rgba(212,175,55,0.10),transparent 70%);filter:blur(120px);border-radius:50%;z-index:-1;animation:orbA 25s ease-in-out infinite alternate;}
+.orb-purple{position:fixed;bottom:-5%;right:-10%;width:min(560px,70vw);height:min(560px,70vw);background:radial-gradient(circle,rgba(98,37,153,0.07),transparent 70%);filter:blur(150px);border-radius:50%;z-index:-1;animation:orbB 30s ease-in-out infinite alternate;}
+@keyframes orbA{0%{transform:translate(0,0)}100%{transform:translate(18vw,25vh)}}
+@keyframes orbB{0%{transform:translate(0,0)}100%{transform:translate(-20vw,-20vh)}}
 
-        body {
-            background-color: var(--bg);
-            color: #e2d8f0;
-            font-family: 'Syne', sans-serif;
-            overflow-x: hidden; min-height: 100vh;
-        }
+/* Glass */
+.glass{background:rgba(255,255,255,0.025);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:16px;}
+.glass-sm{background:rgba(255,255,255,0.02);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.06);border-radius:10px;}
 
-        /* Dot grid */
-        body::before {
-            content: '';
-            position: fixed; inset: 0; z-index: -1;
-            background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 28px 28px;
-        }
+/* Field */
+.field{
+  width:100%;background:rgba(0,0,0,0.35);
+  border:1px solid rgba(255,255,255,0.08);border-radius:8px;
+  color:#e8e4dd;padding:13px 16px;
+  font-family:'Space Grotesk',sans-serif;font-size:0.88rem;
+  transition:border-color 0.25s,box-shadow 0.25s;outline:none;
+}
+.field:focus{border-color:rgba(212,175,55,0.5);box-shadow:0 0 0 3px rgba(212,175,55,0.08);}
+.field::placeholder{color:rgba(255,255,255,0.2);}
 
-        /* Orbs */
-        body::after {
-            content: '';
-            position: fixed; width: 60vw; height: 60vw; border-radius: 50%;
-            background: radial-gradient(circle, rgba(244,63,94,0.08), transparent 70%);
-            top: -20%; left: -20%; filter: blur(100px); z-index: -1;
-            animation: orbDrift 20s ease-in-out infinite alternate;
-        }
-        @keyframes orbDrift { 0%{transform:translate(0,0)} 100%{transform:translate(30vw,40vh)} }
+.label{
+  display:block;font-family:'IBM Plex Mono',monospace;
+  font-size:0.6rem;font-weight:500;text-transform:uppercase;letter-spacing:0.12em;
+  color:rgba(255,255,255,0.3);margin-bottom:8px;
+}
 
-        /* Surface panels */
-        .panel {
-            background: rgba(15, 4, 22, 0.65);
-            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(244, 63, 94, 0.10);
-            border-radius: 16px;
-        }
+/* Tabs */
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.tab-btn{
+  padding:8px 18px;border-radius:9999px;
+  font-family:'IBM Plex Mono',monospace;font-size:0.6rem;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.35);
+  transition:color 0.2s,background 0.2s;border:none;background:transparent;cursor:pointer;
+}
+.tab-btn.active{background:rgba(212,175,55,0.1);color:#D4AF37;}
+.tab-btn:hover:not(.active){color:#e8e4dd;}
 
-        /* Input */
-        .field {
-            width: 100%;
-            background: rgba(6, 2, 9, 0.8);
-            border: 1px solid rgba(244, 63, 94, 0.12);
-            color: #e2d8f0;
-            padding: 13px 16px;
-            border-radius: 10px;
-            font-family: 'Syne', sans-serif;
-            font-size: 0.9rem;
-            transition: border-color 0.25s, box-shadow 0.25s;
-            outline: none;
-        }
-        .field:focus {
-            border-color: var(--rose);
-            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.1);
-        }
-        .field::placeholder { color: #4a3550; }
+/* Buttons */
+.btn-gold{
+  background:rgba(212,175,55,0.12);color:#D4AF37;
+  border:1px solid rgba(212,175,55,0.3);border-radius:8px;cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:0.62rem;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;padding:12px 24px;
+  transition:background 0.2s,border-color 0.2s;display:flex;align-items:center;gap:8px;
+}
+.btn-gold:hover{background:rgba(212,175,55,0.2);border-color:rgba(212,175,55,0.5);}
+.btn-gold:disabled{opacity:0.5;cursor:not-allowed;}
 
-        .label {
-            display: block; font-size: 0.65rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.1em;
-            color: #7c6a8a; margin-bottom: 7px;
-            font-family: 'IBM Plex Mono', monospace;
-        }
+.btn-purple{
+  background:rgba(155,114,207,0.1);color:#9b72cf;
+  border:1px solid rgba(155,114,207,0.25);border-radius:8px;cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:0.62rem;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;padding:12px 24px;
+  transition:background 0.2s;display:flex;align-items:center;gap:8px;
+}
+.btn-purple:hover{background:rgba(155,114,207,0.2);}
 
-        /* Tabs */
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+/* Spinner */
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,0.2);border-top-color:currentColor;border-radius:50%;animation:spin 0.7s linear infinite;display:none;flex-shrink:0;}
+.btn-loading .spinner{display:block;}
+.btn-loading .btn-text{display:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-        .tab-btn {
-            padding: 9px 20px; border-radius: 999px;
-            font-size: 0.75rem; font-weight: 700;
-            letter-spacing: 0.08em; text-transform: uppercase;
-            color: #4a3550;
-            transition: color 0.2s, background 0.2s;
-            font-family: 'IBM Plex Mono', monospace;
-        }
-        .tab-btn.active { background: rgba(244, 63, 94, 0.1); color: var(--rose); }
-        .tab-btn:hover:not(.active) { color: #e2d8f0; }
+/* Toast */
+#toast-area{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{display:flex;align-items:center;gap:12px;padding:13px 20px;border-radius:10px;font-size:0.78rem;font-weight:500;background:rgba(10,10,10,0.95);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);animation:slideIn 0.3s ease forwards;pointer-events:auto;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.04em;}
+.toast.ok{border-left:3px solid #D4AF37;}
+.toast.err{border-left:3px solid #9b72cf;}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
 
-        /* Buttons */
-        .btn-rose {
-            background: var(--rose); color: white;
-            border: none; border-radius: 10px; cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-            padding: 13px 28px;
-            transition: background 0.2s; display: flex; align-items: center; gap: 8px;
-        }
-        .btn-rose:hover { background: var(--rose-dim); }
-
-        .btn-amber {
-            background: rgba(245, 158, 11, 0.15); color: var(--amber);
-            border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-            padding: 13px 28px;
-            transition: background 0.2s; display: flex; align-items: center; gap: 8px;
-        }
-        .btn-amber:hover { background: rgba(245, 158, 11, 0.25); }
-
-        /* Spinner */
-        .spinner {
-            width: 16px; height: 16px;
-            border: 2px solid rgba(255,255,255,0.25);
-            border-top-color: #fff; border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            display: none;
-        }
-        .btn-loading .spinner { display: block; }
-        .btn-loading .btn-text { display: none; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Toast */
-        #toast-area {
-            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-            display: flex; flex-direction: column; gap: 8px; pointer-events: none;
-        }
-        .toast {
-            display: flex; align-items: center; gap: 12px;
-            padding: 14px 22px; border-radius: 10px; font-size: 0.82rem; font-weight: 600;
-            background: rgba(15, 4, 22, 0.95); backdrop-filter: blur(8px);
-            border: 1px solid rgba(244, 63, 94, 0.12);
-            animation: slideIn 0.3s ease forwards; pointer-events: auto;
-            font-family: 'IBM Plex Mono', monospace;
-        }
-        .toast.ok  { border-left: 3px solid #10b981; }
-        .toast.err { border-left: 3px solid var(--rose); }
-        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    </style>
+/* Login hex pulse */
+@keyframes hexPulse{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+</style>
 </head>
 <body class="p-4 md:p-8">
-    <div id="toast-area"></div>
 
-    <!-- ─── LOGIN OVERLAY ─── -->
-    <div id="login-screen" class="fixed inset-0 bg-black/75 backdrop-blur-xl flex items-center justify-center z-[100]">
-        <div class="panel p-10 w-full max-w-sm text-center shadow-2xl" style="border-color:rgba(244,63,94,0.2)">
-            <!-- Hexagon logo -->
-            <div style="width:64px;height:64px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;position:relative">
-                <svg width="64" height="64" viewBox="0 0 64 64" style="position:absolute">
-                    <polygon points="32,2 62,18 62,46 32,62 2,46 2,18" fill="none" stroke="url(#lg)" stroke-width="1.5"/>
-                    <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs>
-                </svg>
-                <i class="fa-solid fa-lock" style="color:var(--rose);position:relative;z-index:1"></i>
-            </div>
+<div class="orb-gold"></div>
+<div class="orb-purple"></div>
+<div id="toast-area"></div>
 
-            <h2 style="font-size:1.5rem;font-weight:800;color:white;margin-bottom:6px">Admin Access</h2>
-            <p style="font-size:0.8rem;color:#7c6a8a;margin-bottom:28px;font-family:'IBM Plex Mono',monospace">Hashinika Portfolio CMS</p>
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen" class="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50" style="background:rgba(5,5,5,0.85)">
+  <div class="glass w-full max-w-sm p-10 text-center" style="border-color:rgba(212,175,55,0.2)">
 
-            <input type="password" id="admin-pass"
-                   class="field text-center mb-4"
-                   style="letter-spacing:0.3em;font-size:1.1rem"
-                   placeholder="••••••••">
-            <p id="login-err" class="hidden mb-4" style="font-size:0.75rem;font-weight:700;color:var(--rose);background:rgba(244,63,94,0.08);padding:8px;border-radius:8px;font-family:'IBM Plex Mono',monospace">
-                Authentication failed
-            </p>
-
-            <button id="login-btn" onclick="checkPass()"
-                    style="width:100%;background:white;color:#060209;border:none;border-radius:10px;padding:14px;font-weight:800;cursor:pointer;transition:opacity 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Syne',sans-serif"
-                    onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                <span class="spinner" style="border-top-color:#060209 !important"></span>
-                <span class="btn-text">Unlock Dashboard</span>
-            </button>
-        </div>
+    <!-- Animated hex logo -->
+    <div style="width:72px;height:72px;margin:0 auto 28px;position:relative;display:flex;align-items:center;justify-content:center">
+      <svg width="72" height="72" viewBox="0 0 72 72" style="position:absolute;animation:hexPulse 3s ease-in-out infinite">
+        <polygon points="36,2 70,20 70,52 36,70 2,52 2,20" fill="none" stroke="url(#loginGrad)" stroke-width="1"/>
+        <polygon points="36,10 62,24 62,48 36,62 10,48 10,24" fill="none" stroke="url(#loginGrad)" stroke-width="0.5" opacity="0.4"/>
+        <defs>
+          <linearGradient id="loginGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#D4AF37"/>
+            <stop offset="100%" stop-color="#9b72cf"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#D4AF37;letter-spacing:2px;position:relative;z-index:1">HP</span>
     </div>
 
-    <!-- ─── ADMIN PANEL ─── -->
-    <div id="admin-panel" class="hidden max-w-6xl mx-auto pt-4">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-            <div>
-                <h1 style="font-size:1.8rem;font-weight:800;color:white;letter-spacing:-0.02em">
-                    <span style="background:linear-gradient(135deg,var(--rose),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Hashinika</span>
-                    &nbsp;CMS
-                </h1>
-                <p style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:#10b981;margin-top:8px;background:rgba(16,185,129,0.08);display:inline-block;padding:4px 12px;border-radius:999px">
-                    <i class="fa-solid fa-circle-check mr-1"></i> Connected
-                </p>
-            </div>
-            <button onclick="location.reload()"
-                    style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:10px 20px;border-radius:8px;border:1px solid rgba(244,63,94,0.2);color:#7c6a8a;background:transparent;cursor:pointer;transition:color 0.2s,border-color 0.2s"
-                    onmouseover="this.style.color='var(--rose)';this.style.borderColor='var(--rose)'"
-                    onmouseout="this.style.color='#7c6a8a';this.style.borderColor='rgba(244,63,94,0.2)'">
-                Sign Out
-            </button>
-        </header>
+    <h2 style="font-family:'Newsreader',serif;font-style:italic;font-size:1.8rem;font-weight:300;color:#e8e4dd;margin-bottom:4px">Admin Access</h2>
+    <p style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:32px">Portfolio CMS</p>
 
-        <!-- Tab bar -->
-        <div class="panel p-1.5 flex gap-1 mb-8 overflow-x-auto" style="width:max-content;border-radius:999px">
-            <button onclick="switchTab('tab-hero', this)"   class="tab-btn active"><i class="fa-regular fa-id-badge mr-2"></i>Profile</button>
-            <button onclick="switchTab('tab-edu', this)"    class="tab-btn"><i class="fa-solid fa-graduation-cap mr-2"></i>Education</button>
-            <button onclick="switchTab('tab-ventures', this)" class="tab-btn"><i class="fa-solid fa-rocket mr-2"></i>Ventures</button>
-            <button onclick="switchTab('tab-proj', this)"   class="tab-btn"><i class="fa-brands fa-github mr-2"></i>GitHub</button>
+    <input type="password" id="admin-pass"
+           class="field text-center mb-4"
+           style="letter-spacing:0.35em;font-size:1.1rem;font-family:'IBM Plex Mono',monospace"
+           placeholder="••••••••">
+
+    <p id="login-err" class="hidden mb-4" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:#9b72cf;background:rgba(155,114,207,0.08);padding:9px;border-radius:6px;border:1px solid rgba(155,114,207,0.2)">
+      Authentication failed
+    </p>
+
+    <button id="login-btn" onclick="checkPass()"
+            style="width:100%;background:#D4AF37;color:#050505;border:none;border-radius:8px;padding:14px;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s;display:flex;align-items:center;justify-content:center;gap:8px"
+            onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+      <div class="spinner" style="border-top-color:#050505;border-color:rgba(5,5,5,0.2);border-top-color:#050505"></div>
+      <span class="btn-text">Unlock Dashboard</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ ADMIN PANEL ═══ -->
+<div id="admin-panel" class="hidden max-w-6xl mx-auto pt-4">
+
+  <!-- Header -->
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <span style="font-family:'Newsreader',serif;font-style:italic;font-size:1.8rem;font-weight:300;color:#D4AF37">HASHINIKA</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.28)">CMS</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="width:6px;height:6px;border-radius:50%;background:#D4AF37;animation:hexPulse 2s ease-in-out infinite"></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(212,175,55,0.7)">Connected</span>
+      </div>
+    </div>
+    <button onclick="location.reload()"
+            style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;padding:9px 18px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.35);background:transparent;cursor:pointer;transition:color 0.2s,border-color 0.2s"
+            onmouseover="this.style.color='#D4AF37';this.style.borderColor='rgba(212,175,55,0.3)'"
+            onmouseout="this.style.color='rgba(255,255,255,0.35)';this.style.borderColor='rgba(255,255,255,0.1)'">
+      Sign Out
+    </button>
+  </header>
+
+  <!-- Tab bar -->
+  <div class="glass p-1.5 flex gap-1 mb-8 overflow-x-auto" style="width:max-content;border-radius:9999px;border-color:rgba(212,175,55,0.12)">
+    <button onclick="switchTab('tab-hero',this)"     class="tab-btn active">
+      <span class="material-symbols-outlined" style="font-size:0.9rem;vertical-align:middle;margin-right:4px">badge</span>Profile
+    </button>
+    <button onclick="switchTab('tab-edu',this)"      class="tab-btn">
+      <span class="material-symbols-outlined" style="font-size:0.9rem;vertical-align:middle;margin-right:4px">school</span>Education
+    </button>
+    <button onclick="switchTab('tab-ventures',this)" class="tab-btn">
+      <span class="material-symbols-outlined" style="font-size:0.9rem;vertical-align:middle;margin-right:4px">rocket_launch</span>Ventures
+    </button>
+    <button onclick="switchTab('tab-github',this)"   class="tab-btn">
+      <i class="fa-brands fa-github" style="margin-right:4px"></i>GitHub
+    </button>
+  </div>
+
+  <!-- ═══ TAB: PROFILE ═══ -->
+  <div id="tab-hero" class="tab-content active space-y-6">
+
+    <!-- Core info -->
+    <div class="glass p-8">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+        <span class="material-symbols-outlined" style="color:#D4AF37;font-size:1.2rem">person</span>
+        <h3 style="font-family:'Newsreader',serif;font-style:italic;font-size:1.2rem;color:#e8e4dd">Core Information</h3>
+      </div>
+      <form id="heroForm">
+        <div class="grid md:grid-cols-2 gap-5">
+          <div><label class="label">Full Name</label><input type="text" id="h_name" class="field" required></div>
+          <div><label class="label">Professional Headline</label><input type="text" id="h_headline" class="field" required></div>
+          <div><label class="label">Phone Number</label><input type="text" id="h_phone" class="field"></div>
+          <div><label class="label">Email Address</label><input type="email" id="h_email" class="field"></div>
+          <div style="grid-column:1/-1"><label class="label">Resume URL (Google Drive)</label><input type="url" id="h_cv" class="field"></div>
+          <div style="grid-column:1/-1"><label class="label">Executive Bio</label><textarea id="h_bio" rows="4" class="field" style="resize:none"></textarea></div>
         </div>
-
-        <!-- ═══ TAB: PROFILE ═══ -->
-        <div id="tab-hero" class="tab-content active space-y-8">
-            <div class="panel p-8">
-                <h3 style="color:white;font-weight:800;font-size:1rem;margin-bottom:24px;display:flex;align-items:center;gap:10px">
-                    <span style="width:32px;height:32px;border-radius:8px;background:rgba(244,63,94,0.12);display:flex;align-items:center;justify-content:center">
-                        <i class="fa-solid fa-id-card" style="color:var(--rose)"></i>
-                    </span>
-                    Core Information
-                </h3>
-                <form id="heroForm">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div><label class="label">Full Name</label><input type="text" id="h_name" class="field" required></div>
-                        <div><label class="label">Professional Headline</label><input type="text" id="h_headline" class="field" required></div>
-                        <div><label class="label">Phone Number</label><input type="text" id="h_phone" class="field"></div>
-                        <div><label class="label">Email Address</label><input type="email" id="h_email" class="field"></div>
-                        <div style="grid-column:1/-1">
-                            <label class="label">Resume URL (Google Drive)</label>
-                            <input type="url" id="h_cv" class="field">
-                        </div>
-                        <div style="grid-column:1/-1">
-                            <label class="label">Executive Bio</label>
-                            <textarea id="h_bio" rows="4" class="field" style="resize:none"></textarea>
-                        </div>
-                    </div>
-                    <div style="margin-top:28px;display:flex;justify-content:flex-end">
-                        <button type="submit" id="hero-save-btn" class="btn-rose">
-                            <span class="spinner"></span><span class="btn-text">Save Profile</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Social Links -->
-            <div class="panel p-8">
-                <h3 style="color:white;font-weight:800;font-size:1rem;margin-bottom:24px;display:flex;align-items:center;gap:10px">
-                    <span style="width:32px;height:32px;border-radius:8px;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center">
-                        <i class="fa-solid fa-link" style="color:var(--amber)"></i>
-                    </span>
-                    Social Links
-                </h3>
-                <form id="socialForm" style="display:flex;gap:12px;margin-bottom:24px">
-                    <input type="url" id="s_url" class="field" placeholder="https://linkedin.com/in/..." required style="flex:1">
-                    <button type="submit" id="social-add-btn" class="btn-amber">
-                        <span class="spinner"></span><span class="btn-text">Add</span>
-                    </button>
-                </form>
-                <div id="social-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-            </div>
+        <div style="margin-top:24px;display:flex;justify-content:flex-end">
+          <button type="submit" id="hero-save-btn" class="btn-gold">
+            <div class="spinner"></div><span class="btn-text">Save Profile</span>
+          </button>
         </div>
-
-        <!-- ═══ TAB: EDUCATION ═══ -->
-        <div id="tab-edu" class="tab-content">
-            <div class="panel p-8 mb-8">
-                <h3 style="color:white;font-weight:800;font-size:1rem;margin-bottom:24px;display:flex;align-items:center;gap:10px">
-                    <span style="width:32px;height:32px;border-radius:8px;background:rgba(52,211,153,0.12);display:flex;align-items:center;justify-content:center">
-                        <i class="fa-solid fa-plus" style="color:#34d399"></i>
-                    </span>
-                    Add Qualification
-                </h3>
-                <form id="eduForm" class="grid md:grid-cols-3 gap-6 items-end">
-                    <div><label class="label">Degree / Title</label><input type="text"  id="e_title" class="field" required></div>
-                    <div><label class="label">Institution</label><input type="text"      id="e_inst"  class="field" required></div>
-                    <div><label class="label">Year / Duration</label><input type="text" id="e_year"  class="field" required></div>
-                    <div style="grid-column:1/-1;display:flex;justify-content:flex-end;margin-top:4px">
-                        <button type="submit" id="edu-save-btn" class="btn-rose">
-                            <span class="spinner"></span><span class="btn-text">Save Record</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <div id="edu-list" class="space-y-4"></div>
-        </div>
-
-        <!-- ═══ TAB: VENTURES ═══ -->
-        <div id="tab-ventures" class="tab-content">
-            <div class="panel p-8 mb-8">
-                <h3 style="color:white;font-weight:800;font-size:1rem;margin-bottom:24px;display:flex;align-items:center;gap:10px">
-                    <span style="width:32px;height:32px;border-radius:8px;background:rgba(244,63,94,0.12);display:flex;align-items:center;justify-content:center">
-                        <i class="fa-solid fa-rocket" style="color:var(--rose)"></i>
-                    </span>
-                    Add Venture / Experience
-                </h3>
-                <form id="ventureForm" class="grid md:grid-cols-2 gap-6 items-end">
-                    <div><label class="label">Company / Venture Name</label><input type="text" id="v_name"  class="field" required></div>
-                    <div><label class="label">Role / Title</label><input type="text"            id="v_role"  class="field" required></div>
-                    <div><label class="label">Period (e.g. 2026 – Present)</label><input type="text" id="v_year" class="field" required></div>
-                    <div></div>
-                    <div style="grid-column:1/-1">
-                        <label class="label">Description (one bullet per line)</label>
-                        <textarea id="v_desc" rows="4" class="field" style="resize:none" placeholder="Leading a software lab...&#10;Managing full lifecycle..."></textarea>
-                    </div>
-                    <div style="grid-column:1/-1;display:flex;justify-content:flex-end">
-                        <button type="submit" id="venture-save-btn" class="btn-rose">
-                            <span class="spinner"></span><span class="btn-text">Save Venture</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <div id="venture-list" class="space-y-4"></div>
-        </div>
-
-        <!-- ═══ TAB: GITHUB ═══ -->
-        <div id="tab-proj" class="tab-content">
-            <div class="panel p-10 text-center">
-                <div style="width:72px;height:72px;background:rgba(6,2,9,0.8);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;border:1px solid rgba(244,63,94,0.15)">
-                    <i class="fa-brands fa-github" style="font-size:2.2rem;color:white"></i>
-                </div>
-                <h3 style="font-size:1.5rem;font-weight:800;color:white;margin-bottom:8px">Automated GitHub Sync</h3>
-                <p style="color:#7c6a8a;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;font-size:0.88rem;line-height:1.7">
-                    The portfolio auto-fetches repositories from
-                    <a href="https://github.com/Hashi24-SE" target="_blank" style="color:var(--rose);font-family:'IBM Plex Mono',monospace">Hashi24-SE</a>
-                    with live stats. No manual updates needed.
-                </p>
-                <div class="panel p-6 inline-block text-left" style="border-color:rgba(244,63,94,0.15)">
-                    <p style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.18em;color:#7c6a8a;margin-bottom:16px;text-align:center">Maintenance Tips</p>
-                    <ul style="font-size:0.85rem;color:#7c6a8a;list-style:none;padding:0;space-y:10px">
-                        <li style="display:flex;gap:10px;align-items:start;margin-bottom:10px"><i class="fa-solid fa-diamond" style="color:var(--rose);font-size:0.5rem;margin-top:6px"></i> Keep repos <strong style="color:var(--text)">Public</strong> to appear in portfolio.</li>
-                        <li style="display:flex;gap:10px;align-items:start;margin-bottom:10px"><i class="fa-solid fa-diamond" style="color:var(--rose);font-size:0.5rem;margin-top:6px"></i> Add detailed <strong style="color:var(--text)">Descriptions</strong> on GitHub.</li>
-                        <li style="display:flex;gap:10px;align-items:start"><i class="fa-solid fa-diamond" style="color:var(--rose);font-size:0.5rem;margin-top:6px"></i> Add <strong style="color:var(--text)">Topics</strong> (java, android, etc.) for tags.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+      </form>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy }
-            from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <!-- Social links -->
+    <div class="glass p-8">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+        <span class="material-symbols-outlined" style="color:#9b72cf;font-size:1.2rem">link</span>
+        <h3 style="font-family:'Newsreader',serif;font-style:italic;font-size:1.2rem;color:#e8e4dd">Social Links</h3>
+      </div>
+      <form id="socialForm" style="display:flex;gap:12px;margin-bottom:20px">
+        <input type="url" id="s_url" class="field" placeholder="https://linkedin.com/in/..." required style="flex:1">
+        <button type="submit" id="social-add-btn" class="btn-purple">
+          <div class="spinner"></div><span class="btn-text">Add</span>
+        </button>
+      </form>
+      <div id="social-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+    </div>
+  </div>
 
-        /* ═══ CONFIGURE FIREBASE — same config as index.html ═══ */
-        const firebaseConfig = {
-            apiKey:            "AIzaSyCuq8AVebliPvo16zJe7zYe9PdYNBKmlBU",
-            authDomain:        "hashinika-portfolio-db.firebaseapp.com",
-            projectId:         "hashinika-portfolio-db",
-            storageBucket:     "hashinika-portfolio-db.firebasestorage.app",
-            messagingSenderId: "883891632101",
-            appId:             "1:883891632101:web:6964e63b94b3d896e8e10c",
-            measurementId:     "G-BVRSRWCMYY"
-        };
+  <!-- ═══ TAB: EDUCATION ═══ -->
+  <div id="tab-edu" class="tab-content space-y-6">
+    <div class="glass p-8">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+        <span class="material-symbols-outlined" style="color:#D4AF37;font-size:1.2rem">add_circle</span>
+        <h3 style="font-family:'Newsreader',serif;font-style:italic;font-size:1.2rem;color:#e8e4dd">Add Qualification</h3>
+      </div>
+      <form id="eduForm" class="grid md:grid-cols-3 gap-5 items-end">
+        <div><label class="label">Degree / Title</label><input type="text"  id="e_title" class="field" required></div>
+        <div><label class="label">Institution</label><input type="text"      id="e_inst"  class="field" required></div>
+        <div><label class="label">Year / Duration</label><input type="text" id="e_year"  class="field" required></div>
+        <div style="grid-column:1/-1;display:flex;justify-content:flex-end">
+          <button type="submit" id="edu-save-btn" class="btn-gold">
+            <div class="spinner"></div><span class="btn-text">Save Record</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div id="edu-list" class="space-y-3"></div>
+  </div>
 
-        const app  = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db   = getFirestore(app);
+  <!-- ═══ TAB: VENTURES ═══ -->
+  <div id="tab-ventures" class="tab-content space-y-6">
+    <div class="glass p-8">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+        <span class="material-symbols-outlined" style="color:#D4AF37;font-size:1.2rem">rocket_launch</span>
+        <h3 style="font-family:'Newsreader',serif;font-style:italic;font-size:1.2rem;color:#e8e4dd">Add Venture / Experience</h3>
+      </div>
+      <form id="ventureForm" class="grid md:grid-cols-2 gap-5 items-end">
+        <div><label class="label">Company / Venture Name</label><input type="text" id="v_name" class="field" required></div>
+        <div><label class="label">Role / Title</label><input type="text"           id="v_role" class="field" required></div>
+        <div><label class="label">Period</label><input type="text"                 id="v_year" class="field" placeholder="2026 — Present" required></div>
+        <div></div>
+        <div style="grid-column:1/-1">
+          <label class="label">Description (one bullet per line)</label>
+          <textarea id="v_desc" rows="4" class="field" style="resize:none" placeholder="Leading a software lab...&#10;Managing full lifecycle..."></textarea>
+        </div>
+        <div style="grid-column:1/-1;display:flex;justify-content:flex-end">
+          <button type="submit" id="venture-save-btn" class="btn-gold">
+            <div class="spinner"></div><span class="btn-text">Save Venture</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div id="venture-list" class="space-y-3"></div>
+  </div>
 
-        /* ─── TOAST ─── */
-        function toast(msg, type = 'ok') {
-            const c  = document.getElementById('toast-area');
-            const el = document.createElement('div');
-            el.className = `toast ${type}`;
-            el.innerHTML = `<i class="fa-solid ${type==='ok' ? 'fa-circle-check' : 'fa-circle-xmark'}" style="color:${type==='ok'?'#10b981':'var(--rose)'}"></i> ${msg}`;
-            c.appendChild(el);
-            setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 4000);
-        }
+  <!-- ═══ TAB: GITHUB ═══ -->
+  <div id="tab-github" class="tab-content">
+    <div class="glass p-10 text-center">
+      <!-- Decorative hex -->
+      <div style="width:80px;height:80px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;position:relative">
+        <svg width="80" height="80" viewBox="0 0 80 80" style="position:absolute;opacity:0.4">
+          <polygon points="40,2 78,22 78,58 40,78 2,58 2,22" fill="none" stroke="#D4AF37" stroke-width="1"/>
+        </svg>
+        <i class="fa-brands fa-github" style="font-size:2rem;color:#e8e4dd;position:relative;z-index:1"></i>
+      </div>
+      <h3 style="font-family:'Newsreader',serif;font-style:italic;font-size:1.8rem;font-weight:300;color:#e8e4dd;margin-bottom:8px">Automated GitHub Sync</h3>
+      <p style="color:rgba(255,255,255,0.38);font-size:0.88rem;line-height:1.7;max-width:480px;margin:0 auto 32px">
+        The portfolio auto-fetches repositories from
+        <a href="https://github.com/Hashi24-SE" target="_blank" style="color:#D4AF37;font-family:'IBM Plex Mono',monospace">Hashi24-SE</a>
+        with live language stats. No manual updates needed.
+      </p>
+      <div class="glass-sm p-6 inline-block text-left" style="border-color:rgba(212,175,55,0.12)">
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.28);margin-bottom:16px;text-align:center">Maintenance Tips</p>
+        <ul style="font-size:0.85rem;color:rgba(255,255,255,0.4);list-style:none;padding:0">
+          <li style="display:flex;gap:10px;align-items:start;margin-bottom:10px"><span style="color:#D4AF37;font-size:0.5rem;margin-top:6px;flex-shrink:0">◆</span>Keep repos <strong style="color:#e8e4dd">Public</strong> to appear in portfolio.</li>
+          <li style="display:flex;gap:10px;align-items:start;margin-bottom:10px"><span style="color:#D4AF37;font-size:0.5rem;margin-top:6px;flex-shrink:0">◆</span>Add detailed <strong style="color:#e8e4dd">Descriptions</strong> on GitHub.</li>
+          <li style="display:flex;gap:10px;align-items:start"><span style="color:#D4AF37;font-size:0.5rem;margin-top:6px;flex-shrink:0">◆</span>Add <strong style="color:#e8e4dd">Topics</strong> (java, android, etc.) for tags.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-        /* ─── LOADING STATE ─── */
-        function setLoad(id, on) {
-            const b = document.getElementById(id);
-            if (on) { b.classList.add('btn-loading'); b.disabled = true; }
-            else    { b.classList.remove('btn-loading'); b.disabled = false; }
-        }
+</div><!-- end admin-panel -->
 
-        /* ─── TAB SWITCH ─── */
-        window.switchTab = (id, btn) => {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
-        };
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        /* ─── LOGIN ─── */
-        document.getElementById('admin-pass').addEventListener('keydown', e => { if (e.key === 'Enter') checkPass(); });
+const firebaseConfig={
+  apiKey:"AIzaSyCuq8AVebliPvo16zJe7zYe9PdYNBKmlBU",
+  authDomain:"hashinika-portfolio-db.firebaseapp.com",
+  projectId:"hashinika-portfolio-db",
+  storageBucket:"hashinika-portfolio-db.firebasestorage.app",
+  messagingSenderId:"883891632101",
+  appId:"1:883891632101:web:6964e63b94b3d896e8e10c",
+  measurementId:"G-BVRSRWCMYY"
+};
 
-        window.checkPass = async () => {
-            const pass = document.getElementById('admin-pass').value;
-            const err  = document.getElementById('login-err');
-            /* ⚠️ Change this password! */
-            if (pass !== "hashinika123") { err.classList.remove('hidden'); return; }
-            err.classList.add('hidden');
-            setLoad('login-btn', true);
-            try {
-                await signInAnonymously(auth);
-            } catch(e) {
-                setLoad('login-btn', false);
-                err.textContent = "Error: " + e.message;
-                err.classList.remove('hidden');
-            }
-        };
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('admin-panel').classList.remove('hidden');
-                loadAll();
-            }
-        });
+/* Toast */
+function toast(msg,type='ok'){
+  const c=document.getElementById('toast-area');
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  const icon=type==='ok'?'fa-circle-check':'fa-circle-xmark';
+  const clr=type==='ok'?'#D4AF37':'#9b72cf';
+  el.innerHTML=`<i class="fa-solid ${icon}" style="color:${clr}"></i> ${msg}`;
+  c.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity 0.3s';setTimeout(()=>el.remove(),300);},4000);
+}
 
-        /* ─── LOAD ALL ─── */
-        async function loadAll() {
-            try {
-                const h = await getDoc(doc(db, "siteConfig", "hero"));
-                if (h.exists()) {
-                    const d = h.data();
-                    ['name','headline','phone','email','cv','bio'].forEach(k => {
-                        const el = document.getElementById(`h_${k}`);
-                        if (el) el.value = d[k] || '';
-                    });
-                }
-            } catch(e) { toast('Error loading profile: ' + e.message, 'err'); }
-            loadSocials(); loadEdu(); loadVentures();
-        }
+/* Load state */
+function setLoad(id,on){
+  const b=document.getElementById(id);
+  if(!b)return;
+  if(on){b.classList.add('btn-loading');b.disabled=true;}
+  else{b.classList.remove('btn-loading');b.disabled=false;}
+}
 
-        /* ─── HERO FORM ─── */
-        document.getElementById('heroForm').onsubmit = async e => {
-            e.preventDefault(); setLoad('hero-save-btn', true);
-            try {
-                await setDoc(doc(db, "siteConfig", "hero"), {
-                    name:     document.getElementById('h_name').value,
-                    headline: document.getElementById('h_headline').value,
-                    phone:    document.getElementById('h_phone').value,
-                    email:    document.getElementById('h_email').value,
-                    cv:       document.getElementById('h_cv').value,
-                    bio:      document.getElementById('h_bio').value
-                }, { merge: true });
-                toast('Profile saved successfully ✦');
-            } catch(e) { toast('Save failed: ' + e.message, 'err'); }
-            setLoad('hero-save-btn', false);
-        };
+/* Tab switch */
+window.switchTab=(id,btn)=>{
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+};
 
-        /* ─── SOCIALS ─── */
-        document.getElementById('socialForm').onsubmit = async e => {
-            e.preventDefault(); setLoad('social-add-btn', true);
-            try {
-                await addDoc(collection(db, "socials"), { url: document.getElementById('s_url').value, timestamp: new Date() });
-                document.getElementById('s_url').value = '';
-                toast('Social link added'); loadSocials();
-            } catch(e) { toast('Error: ' + e.message, 'err'); }
-            setLoad('social-add-btn', false);
-        };
+/* Login */
+document.getElementById('admin-pass').addEventListener('keydown',e=>{if(e.key==='Enter')checkPass();});
 
-        async function loadSocials() {
-            try {
-                const snap = await getDocs(query(collection(db, "socials"), orderBy("timestamp","asc")));
-                document.getElementById('social-list').innerHTML = snap.docs.map(d => `
-                    <div style="background:rgba(6,2,9,0.6);border:1px solid rgba(244,63,94,0.08);border-radius:10px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
-                        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:#7c6a8a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80%">${d.data().url}</span>
-                        <button onclick="delSocial('${d.id}')" style="color:#4a3550;background:transparent;border:none;cursor:pointer;transition:color 0.2s" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='#4a3550'"><i class="fa-solid fa-trash"></i></button>
-                    </div>`).join('');
-            } catch(e) { console.error(e); }
-        }
+window.checkPass=async()=>{
+  const pass=document.getElementById('admin-pass').value;
+  const err=document.getElementById('login-err');
+  if(pass!=="hashinika123"){err.classList.remove('hidden');return;}
+  err.classList.add('hidden');
+  setLoad('login-btn',true);
+  try{await signInAnonymously(auth);}
+  catch(e){setLoad('login-btn',false);err.textContent="Error: "+e.message;err.classList.remove('hidden');}
+};
 
-        window.delSocial = async id => {
-            if (!confirm('Delete this link?')) return;
-            try { await deleteDoc(doc(db, "socials", id)); loadSocials(); }
-            catch(e) { toast('Delete failed', 'err'); }
-        };
+onAuthStateChanged(auth,user=>{
+  if(user){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('admin-panel').classList.remove('hidden');
+    loadAll();
+  }
+});
 
-        /* ─── EDUCATION ─── */
-        document.getElementById('eduForm').onsubmit = async e => {
-            e.preventDefault(); setLoad('edu-save-btn', true);
-            try {
-                await addDoc(collection(db, "education"), {
-                    title: document.getElementById('e_title').value,
-                    inst:  document.getElementById('e_inst').value,
-                    year:  document.getElementById('e_year').value,
-                    timestamp: new Date()
-                });
-                e.target.reset(); toast('Education record added'); loadEdu();
-            } catch(e) { toast('Error: ' + e.message, 'err'); }
-            setLoad('edu-save-btn', false);
-        };
+/* Load all */
+async function loadAll(){
+  try{
+    const h=await getDoc(doc(db,"siteConfig","hero"));
+    if(h.exists()){
+      const d=h.data();
+      ['name','headline','phone','email','cv','bio'].forEach(k=>{
+        const el=document.getElementById(`h_${k}`);
+        if(el)el.value=d[k]||'';
+      });
+    }
+  }catch(e){toast('Error loading profile: '+e.message,'err');}
+  loadSocials();loadEdu();loadVentures();
+}
 
-        async function loadEdu() {
-            try {
-                const snap = await getDocs(query(collection(db, "education"), orderBy("timestamp","desc")));
-                document.getElementById('edu-list').innerHTML = snap.docs.map(d => `
-                    <div style="background:rgba(6,2,9,0.6);border:1px solid rgba(244,63,94,0.08);border-radius:12px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center">
-                        <div>
-                            <h4 style="font-weight:700;color:white;font-size:1.05rem">${d.data().title}</h4>
-                            <p style="font-size:0.8rem;color:#7c6a8a;margin-top:2px">${d.data().inst} &nbsp;·&nbsp; <span style="color:var(--rose)">${d.data().year}</span></p>
-                        </div>
-                        <button onclick="delEdu('${d.id}')" style="width:38px;height:38px;border-radius:8px;background:rgba(244,63,94,0.08);color:var(--rose);border:none;cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='var(--rose);color:white'" onmouseout="this.style.background='rgba(244,63,94,0.08)'"><i class="fa-solid fa-trash"></i></button>
-                    </div>`).join('');
-            } catch(e) { console.error(e); }
-        }
+/* ── PROFILE ── */
+document.getElementById('heroForm').onsubmit=async e=>{
+  e.preventDefault();setLoad('hero-save-btn',true);
+  try{
+    await setDoc(doc(db,"siteConfig","hero"),{
+      name:document.getElementById('h_name').value,
+      headline:document.getElementById('h_headline').value,
+      phone:document.getElementById('h_phone').value,
+      email:document.getElementById('h_email').value,
+      cv:document.getElementById('h_cv').value,
+      bio:document.getElementById('h_bio').value
+    },{merge:true});
+    toast('Profile saved ✦');
+  }catch(e){toast('Save failed: '+e.message,'err');}
+  setLoad('hero-save-btn',false);
+};
 
-        window.delEdu = async id => {
-            if (!confirm('Delete?')) return;
-            try { await deleteDoc(doc(db, "education", id)); loadEdu(); }
-            catch(e) { toast('Delete failed', 'err'); }
-        };
+/* ── SOCIALS ── */
+document.getElementById('socialForm').onsubmit=async e=>{
+  e.preventDefault();setLoad('social-add-btn',true);
+  try{
+    await addDoc(collection(db,"socials"),{url:document.getElementById('s_url').value,timestamp:new Date()});
+    document.getElementById('s_url').value='';
+    toast('Social link added');loadSocials();
+  }catch(e){toast('Error: '+e.message,'err');}
+  setLoad('social-add-btn',false);
+};
 
-        /* ─── VENTURES ─── */
-        document.getElementById('ventureForm').onsubmit = async e => {
-            e.preventDefault(); setLoad('venture-save-btn', true);
-            try {
-                await addDoc(collection(db, "ventures"), {
-                    name:  document.getElementById('v_name').value,
-                    role:  document.getElementById('v_role').value,
-                    year:  document.getElementById('v_year').value,
-                    desc:  document.getElementById('v_desc').value,
-                    timestamp: new Date()
-                });
-                e.target.reset(); toast('Venture added'); loadVentures();
-            } catch(e) { toast('Error: ' + e.message, 'err'); }
-            setLoad('venture-save-btn', false);
-        };
+async function loadSocials(){
+  try{
+    const snap=await getDocs(query(collection(db,"socials"),orderBy("timestamp","asc")));
+    document.getElementById('social-list').innerHTML=snap.docs.map(d=>`
+      <div class="glass-sm" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:rgba(255,255,255,0.38);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.data().url}</span>
+        <button onclick="delSocial('${d.id}')" style="color:rgba(255,255,255,0.25);background:transparent;border:none;cursor:pointer;flex-shrink:0;transition:color 0.2s" onmouseover="this.style.color='#9b72cf'" onmouseout="this.style.color='rgba(255,255,255,0.25)'">
+          <span class="material-symbols-outlined" style="font-size:1rem">delete</span>
+        </button>
+      </div>`).join('');
+  }catch(e){console.error(e);}
+}
 
-        async function loadVentures() {
-            try {
-                const snap = await getDocs(query(collection(db, "ventures"), orderBy("timestamp","desc")));
-                document.getElementById('venture-list').innerHTML = snap.docs.map(d => `
-                    <div style="background:rgba(6,2,9,0.6);border:1px solid rgba(244,63,94,0.08);border-radius:12px;padding:20px 24px;display:flex;justify-content:space-between;align-items:start;gap:12px">
-                        <div>
-                            <h4 style="font-weight:700;color:white;font-size:1.05rem">${d.data().name}</h4>
-                            <p style="font-size:0.75rem;font-family:'IBM Plex Mono',monospace;color:var(--rose);margin-top:2px">${d.data().role} &nbsp;·&nbsp; ${d.data().year}</p>
-                            <p style="font-size:0.8rem;color:#7c6a8a;margin-top:8px;white-space:pre-line">${d.data().desc}</p>
-                        </div>
-                        <button onclick="delVenture('${d.id}')" style="width:38px;height:38px;border-radius:8px;background:rgba(244,63,94,0.08);color:var(--rose);border:none;cursor:pointer;flex-shrink:0"><i class="fa-solid fa-trash"></i></button>
-                    </div>`).join('') || '<p style="color:#4a3550;font-style:italic;font-size:0.85rem">No ventures added yet.</p>';
-            } catch(e) { console.error(e); }
-        }
+window.delSocial=async id=>{
+  if(!confirm('Delete this link?'))return;
+  try{await deleteDoc(doc(db,"socials",id));loadSocials();}
+  catch(e){toast('Delete failed','err');}
+};
 
-        window.delVenture = async id => {
-            if (!confirm('Delete?')) return;
-            try { await deleteDoc(doc(db, "ventures", id)); loadVentures(); }
-            catch(e) { toast('Delete failed', 'err'); }
-        };
-    </script>
+/* ── EDUCATION ── */
+document.getElementById('eduForm').onsubmit=async e=>{
+  e.preventDefault();setLoad('edu-save-btn',true);
+  try{
+    await addDoc(collection(db,"education"),{
+      title:document.getElementById('e_title').value,
+      inst:document.getElementById('e_inst').value,
+      year:document.getElementById('e_year').value,
+      timestamp:new Date()
+    });
+    e.target.reset();toast('Education record added');loadEdu();
+  }catch(e){toast('Error: '+e.message,'err');}
+  setLoad('edu-save-btn',false);
+};
+
+async function loadEdu(){
+  try{
+    const snap=await getDocs(query(collection(db,"education"),orderBy("timestamp","desc")));
+    document.getElementById('edu-list').innerHTML=snap.docs.map(d=>`
+      <div class="glass-sm" style="padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div>
+          <h4 style="font-family:'Newsreader',serif;font-style:italic;font-size:1.05rem;color:#e8e4dd">${d.data().title}</h4>
+          <p style="font-size:0.78rem;color:rgba(255,255,255,0.38);margin-top:3px">${d.data().inst} <span style="color:#D4AF37;margin-left:6px">· ${d.data().year}</span></p>
+        </div>
+        <button onclick="delEdu('${d.id}')" style="width:36px;height:36px;border-radius:8px;background:rgba(155,114,207,0.08);color:#9b72cf;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s" onmouseover="this.style.background='rgba(155,114,207,0.2)'" onmouseout="this.style.background='rgba(155,114,207,0.08)'">
+          <span class="material-symbols-outlined" style="font-size:0.95rem">delete</span>
+        </button>
+      </div>`).join('');
+  }catch(e){console.error(e);}
+}
+
+window.delEdu=async id=>{
+  if(!confirm('Delete?'))return;
+  try{await deleteDoc(doc(db,"education",id));loadEdu();}
+  catch(e){toast('Delete failed','err');}
+};
+
+/* ── VENTURES ── */
+document.getElementById('ventureForm').onsubmit=async e=>{
+  e.preventDefault();setLoad('venture-save-btn',true);
+  try{
+    await addDoc(collection(db,"ventures"),{
+      name:document.getElementById('v_name').value,
+      role:document.getElementById('v_role').value,
+      year:document.getElementById('v_year').value,
+      desc:document.getElementById('v_desc').value,
+      timestamp:new Date()
+    });
+    e.target.reset();toast('Venture added');loadVentures();
+  }catch(e){toast('Error: '+e.message,'err');}
+  setLoad('venture-save-btn',false);
+};
+
+async function loadVentures(){
+  try{
+    const snap=await getDocs(query(collection(db,"ventures"),orderBy("timestamp","desc")));
+    document.getElementById('venture-list').innerHTML=snap.docs.length
+      ?snap.docs.map(d=>`
+          <div class="glass-sm" style="padding:18px 22px;display:flex;justify-content:space-between;align-items:start;gap:12px">
+            <div style="flex:1;min-width:0">
+              <h4 style="font-family:'Newsreader',serif;font-style:italic;font-size:1.05rem;color:#e8e4dd">${d.data().name}</h4>
+              <p style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:#D4AF37;margin-top:3px">${d.data().role} · ${d.data().year}</p>
+              <p style="font-size:0.8rem;color:rgba(255,255,255,0.35);margin-top:8px;white-space:pre-line;line-height:1.6">${d.data().desc||''}</p>
+            </div>
+            <button onclick="delVenture('${d.id}')" style="width:36px;height:36px;border-radius:8px;background:rgba(155,114,207,0.08);color:#9b72cf;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s" onmouseover="this.style.background='rgba(155,114,207,0.2)'" onmouseout="this.style.background='rgba(155,114,207,0.08)'">
+              <span class="material-symbols-outlined" style="font-size:0.95rem">delete</span>
+            </button>
+          </div>`).join('')
+      :`<p style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:rgba(255,255,255,0.25);font-style:italic;padding:8px">No ventures added yet.</p>`;
+  }catch(e){console.error(e);}
+}
+
+window.delVenture=async id=>{
+  if(!confirm('Delete?'))return;
+  try{await deleteDoc(doc(db,"ventures",id));loadVentures();}
+  catch(e){toast('Delete failed','err');}
+};
+</script>
 </body>
 </html>
